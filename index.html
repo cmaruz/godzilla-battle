@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Godzilla Battle ✨ SPECTACULAR EDITION — by Mattia</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;height:100%;overflow:hidden;background:#0b1020;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:#fff;touch-action:none;overscroll-behavior:none}
+#wrap{position:fixed;inset:0}
+canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;overflow-y:auto;padding:18px 14px 28px;background:linear-gradient(180deg,rgba(5,10,25,.92),rgba(10,16,38,.96));z-index:10}
+.hidden{display:none!important}
+h1{font-size:clamp(34px,7vw,64px);letter-spacing:2px;text-align:center;line-height:.95;text-shadow:0 0 24px #37c8ff,0 4px 0 #123}
+h1 span{color:#ffd83d}
+.sub{text-align:center;opacity:.92;margin:8px 0 2px;font-weight:700}
+.by{text-align:center;color:#8fe3ff;margin-bottom:10px;font-weight:700}
+.badges{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:8px 0 14px}
+.badge{background:#172554;border:1.5px solid #38bdf8;color:#bae6fd;padding:6px 10px;border-radius:999px;font-size:13px;font-weight:800}
+.badge.gold{background:#451a03;border-color:#f59e0b;color:#fde68a}
+.badge.green{background:#052e16;border-color:#22c55e;color:#bbf7d0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;width:min(980px,100%)}
+.card{background:#111c38;border:2px solid #334155;border-radius:18px;padding:12px;cursor:pointer;text-align:center;min-height:132px}
+.card.sel{border-color:#ffd83d;box-shadow:0 0 0 3px rgba(255,216,61,.25),0 0 24px rgba(255,216,61,.25)}
+.card.locked{opacity:.55;cursor:default}
+.kaijuIcon{font-size:44px;line-height:1}
+.card h3{font-size:15px;margin:6px 0 4px}
+.card p{font-size:12px;opacity:.85;line-height:1.35}
+.rarity{font-size:11px;color:#fbbf24;font-weight:800;margin-top:5px}
+.section{width:min(980px,100%);margin-top:16px}
+.section h2{font-size:19px;margin-bottom:8px}
+.row{display:flex;gap:9px;flex-wrap:wrap;justify-content:center}
+.btn{border:0;border-radius:16px;padding:14px 18px;font-size:17px;font-weight:900;cursor:pointer;background:#2563eb;color:#fff;box-shadow:0 5px 0 #1e3a8a;min-width:150px}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 #1e3a8a}
+.btn.big{font-size:21px;padding:17px 26px;background:#dc2626;box-shadow:0 6px 0 #7f1d1d;min-width:min(330px,86vw)}
+.btn.gold{background:#d97706;box-shadow:0 5px 0 #78350f;color:#fff7ed}
+.btn.green{background:#16a34a;box-shadow:0 5px 0 #14532d}
+.btn.grey{background:#334155;box-shadow:0 5px 0 #0f172a}
+.btn.small{min-width:0;padding:10px 13px;font-size:14px}
+.modeBtn{background:#1e293b;border:2px solid #475569;color:#fff}
+.modeBtn.sel{border-color:#38bdf8;background:#0c2a4a}
+.chip{background:#1e293b;border:2px solid #475569;border-radius:999px;padding:9px 13px;font-weight:800;cursor:pointer}
+.chip.sel{border-color:#38bdf8;background:#0c2a4a}
+.note{font-size:13px;opacity:.8;text-align:center;max-width:760px;line-height:1.45;margin-top:10px}
+#hud{position:absolute;top:0;left:0;right:0;z-index:5;display:flex;justify-content:space-between;gap:8px;padding:calc(8px + env(safe-area-inset-top)) 10px 8px;pointer-events:none}
+.hudBox{background:rgba(2,6,23,.72);border:1.5px solid rgba(125,211,252,.5);border-radius:13px;padding:7px 10px;font-weight:800;font-size:14px;backdrop-filter:blur(3px)}
+#hpWrap{width:min(320px,38vw);height:15px;background:#450a0a;border-radius:999px;overflow:hidden;border:1px solid #fca5a5;margin-top:4px}
+#hpBar{height:100%;background:linear-gradient(90deg,#22c55e,#84cc16);width:100%}
+#spWrap{width:min(320px,38vw);height:11px;background:#172554;border-radius:999px;overflow:hidden;border:1px solid #93c5fd;margin-top:4px}
+#spBar{height:100%;background:linear-gradient(90deg,#38bdf8,#e879f9);width:0%}
+#controls{position:absolute;left:0;right:0;bottom:0;z-index:6;display:flex;justify-content:space-between;align-items:flex-end;padding:0 14px calc(14px + env(safe-area-inset-bottom));pointer-events:none}
+#joy{width:132px;height:132px;border-radius:50%;background:rgba(255,255,255,.10);border:2px solid rgba(255,255,255,.35);position:relative;pointer-events:auto}
+#stick{width:58px;height:58px;border-radius:50%;background:rgba(255,255,255,.75);position:absolute;left:37px;top:37px;box-shadow:0 4px 14px rgba(0,0,0,.4)}
+.actBtns{display:flex;gap:12px;align-items:flex-end;pointer-events:auto}
+.cbtn{width:84px;height:84px;border-radius:50%;border:3px solid rgba(255,255,255,.55);font-weight:1000;color:#fff;font-size:15px;box-shadow:0 6px 18px rgba(0,0,0,.45)}
+#atkBtn{background:#dc2626}
+#spBtn{background:#7c3aed;width:96px;height:96px}
+.cbtn:active{transform:scale(.93)}
+#spBtn.ready{animation:pulse 0.7s infinite alternate;border-color:#ffd83d}
+@keyframes pulse{from{box-shadow:0 0 8px #a855f7}to{box-shadow:0 0 28px #ffd83d}}
+#centerMsg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:7;pointer-events:none;font-size:clamp(28px,7vw,58px);font-weight:1000;text-align:center;text-shadow:0 0 22px #000,0 3px 0 #000;padding:20px}
+.teamScore{font-size:13px}
+.gramCard{text-align:left}
+.gramCard .kaijuIcon{text-align:center}
+#vig{position:absolute;inset:0;pointer-events:none;z-index:4;box-shadow:inset 0 0 130px 45px rgba(220,38,38,.9);opacity:0}
+.confetti{position:absolute;top:-50px;pointer-events:none;z-index:30;animation:cfall linear forwards}
+@keyframes cfall{to{transform:translateY(115vh) rotate(360deg)}}
+#toast{position:absolute;top:76px;left:50%;transform:translateX(-50%);z-index:8;background:rgba(2,6,23,.88);border:1.5px solid #facc15;border-radius:13px;padding:9px 13px;font-weight:900;display:none;max-width:92vw;text-align:center}
+</style>
+</head>
+<body>
+<div id="wrap">
+<canvas id="game"></canvas>
+
+<div id="vig"></div>
+<div id="hud" class="hidden">
+  <div class="hudBox"><div id="hudName">Godzilla</div><div id="hpWrap"><div id="hpBar"></div></div><div id="spWrap"><div id="spBar"></div></div><div style="font-size:11px;opacity:.85">SPECIAL</div></div>
+  <div class="hudBox" style="text-align:center"><div id="hudAlive">35 ALIVE</div><div id="hudKills">Kills: 0</div><div id="hudLevel">Level 1</div></div>
+  <div class="hudBox" style="text-align:right"><div id="hudMode">BATTLE ROYALE</div><div id="hudTotal">Total kills: 0</div><div class="teamScore" id="hudTeam"></div></div>
+</div>
+<div id="toast"></div>
+<div id="centerMsg" class="hidden"></div>
+
+<div id="controls" class="hidden">
+  <div id="joy"><div id="stick"></div></div>
+  <div class="actBtns">
+    <button class="cbtn" id="muteBtn" style="width:56px;height:56px;background:#334155;font-size:23px">🔊</button>
+    <button class="cbtn" id="atkBtn">ATOMIC<br>ATTACK</button>
+    <button class="cbtn" id="spBtn">SPECIAL ⭐</button>
+  </div>
+</div>
+
+<!-- MENU -->
+<div class="screen" id="menu">
+  <h1>GODZILLA<br><span>BATTLE</span></h1>
+  <div class="badge gold" style="font-size:16px;margin-top:8px">✨ SPECTACULAR EDITION ✨</div>
+  <div class="sub">35 fighters enter. 1 Godzilla remains.</div>
+  <div class="by">Designed by Mattia 🎮</div>
+  <div class="badges"><div class="badge green">🚫 NO ADS — EVER</div><div class="badge green">💸 NO PURCHASES — EVER</div><div class="badge gold">🏆 NEW PASS EVERY 31 DAYS</div><div class="badge">🗺️ NEW MAPS EVERY MONTH</div></div>
+
+  <div class="section"><h2>1. Choose your Godzilla — all 6 are FREE</h2><div class="grid" id="charGrid"></div></div>
+
+  <div class="section"><h2>2. Choose a mode</h2><div class="row" id="modeRow">
+    <button class="btn modeBtn sel" data-mode="royale">👑 Battle Royale<br><small>35 players</small></button>
+    <button class="btn modeBtn" data-mode="bots">🤖 Bots Mode<br><small>choose 1–6 bots</small></button>
+    <button class="btn modeBtn" data-mode="team">🔴 Team Fight 🔵<br><small>RED vs BLUE</small></button>
+    <button class="btn modeBtn" data-mode="party">🎉 Party Mode<br><small>you + 2 teammates</small></button>
+    <button class="btn modeBtn" data-mode="practice">🎯 Practice<br><small>practice map</small></button>
+    <button class="btn modeBtn" data-mode="boss" style="border-color:#facc15;background:#451a03">👹 APEX BOSS FIGHT<br><small>1 vs 1 GIANT BOSS!</small></button>
+  </div>
+  <div class="row" id="botRow" style="margin-top:10px;display:none"><span style="align-self:center;font-weight:800">Bots:</span><button class="chip" id="botMinus">−</button><span class="chip sel" id="botCount">6 bots</span><button class="chip" id="botPlus">+</button></div>
+  </div>
+
+  <div class="section"><h2>3. Choose a map</h2><div class="row" id="mapRow">
+    <button class="chip sel" data-map="tokyo">🏙️ Tokyo City</button>
+    <button class="chip" data-map="volcano">🌋 Volcano Island</button>
+    <button class="chip" data-map="ice">🧊 Ice Island</button>
+    <button class="chip" data-map="desert">🏜️ Desert Canyon</button>
+    <button class="chip" data-map="practice">🎯 Practice Map</button>
+  </div></div>
+
+  <div class="section" style="text-align:center">
+    <button class="btn big" id="playBtn">▶ PLAY</button><br><br>
+    <button class="btn gold" id="gramBtn">📸 GODZILLAGRAM — My Collection</button>
+    <button class="btn grey" id="howBtn">❓ How to Play</button>
+    <p class="note">Move with the joystick (left) or WASD / arrow keys. Tap <b>ATOMIC ATTACK</b> to shoot. Fill the purple bar, then tap <b>SPECIAL</b> for your Godzilla's own special move!<br>Kills level you up. Every 10 total kills unlocks a NEW Godzilla. VSTAR at level 35 = +50% damage. VMAX at level 50 with 4 Godzillas = +100% damage.</p>
+    <p class="note" id="metaLine"></p>
+  </div>
+</div>
+
+<!-- GODZILLAGRAM -->
+<div class="screen hidden" id="gram">
+  <h1 style="font-size:clamp(30px,6vw,52px)">📸 GODZILLAGRAM</h1>
+  <div class="sub">All your Godzillas — your whole collection</div>
+  <div class="by" id="gramMeta"></div>
+  <div class="grid" id="gramGrid"></div>
+  <br><button class="btn grey" id="gramBack">← Back to Menu</button>
+</div>
+
+<!-- HOW -->
+<div class="screen hidden" id="how">
+  <h1 style="font-size:clamp(30px,6vw,52px)">HOW TO PLAY</h1>
+  <div style="max-width:720px;background:#111c38;border:2px solid #334155;border-radius:18px;padding:18px;line-height:1.65;font-size:16px">
+    🕹️ <b>Move:</b> left joystick on iPad, or WASD / arrows on a computer.<br>
+    🔥 <b>Attack:</b> red ATOMIC ATTACK button (or J / Space).<br>
+    ⭐ <b>Special:</b> purple button (or K) when the SPECIAL bar is full. Every Godzilla has a different special — Mattia designed them all.<br>
+    ❤️ <b>Survive:</b> in Battle Royale the storm circle shrinks — stay inside it!<br>
+    🏆 <b>Win:</b> be the last Godzilla standing, or beat the BLUE team in Team Fight.<br>
+    📈 <b>Level up:</b> every kill gives XP. Every 10 total kills unlocks a new Godzilla in the Godzillagram.<br>
+    💥 <b>Spectacular stuff:</b> buildings can be DESTROYED, kills go slow-motion, combos build up, lightning strikes Tokyo — and in Battle Royale, when only 10 fighters are left, the giant APEX BOSS appears!<br>
+    🚫 <b>Mattia's rules:</b> no ads, no purchases, ever. Everything is earned by playing.
+  </div>
+  <br><button class="btn grey" id="howBack">← Back to Menu</button>
+</div>
+
+<!-- DEATH -->
+<div class="screen hidden" id="death" style="justify-content:center;text-align:center">
+  <div style="font-size:74px">💥</div>
+  <h1 style="color:#f87171">YOU WERE<br>DEFEATED!</h1>
+  <p class="sub" id="deathStats"></p><br>
+  <button class="btn big" id="retryBtn">↻ RETRY</button><br>
+  <button class="btn grey" id="deathMenuBtn">🏠 GO BACK TO MENU</button>
+</div>
+
+<!-- WIN -->
+<div class="screen hidden" id="win" style="justify-content:center;text-align:center">
+  <div style="font-size:74px">🏆</div>
+  <h1 style="color:#ffd83d">#1 VICTORY!</h1>
+  <p class="sub" id="winStats"></p><br>
+  <button class="btn big" id="winAgainBtn">▶ PLAY AGAIN</button><br>
+  <button class="btn grey" id="winMenuBtn">🏠 GO BACK TO MENU</button>
+</div>
+</div>
+
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const canvas=$("game"),ctx=canvas.getContext("2d");
+let W=0,H=0,DPR=1;
+function resize(){DPR=Math.min(window.devicePixelRatio||1,2);W=window.innerWidth;H=window.innerHeight;canvas.width=W*DPR;canvas.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0)}
+window.addEventListener("resize",resize);resize();
+
+const ROSTER=[
+ {id:"thermo",name:"Godzilla 2014 Thermo",emoji:"🔴🦖",color:"#3f3f46",accent:"#ef4444",glow:"#f97316",special:"Red Explosion",desc:"Red Explosion: a huge red blast + 50% more damage for a while."},
+ {id:"super",name:"Godzilla 2014 Supercharge",emoji:"🔵🦖",color:"#1e3a5f",accent:"#38bdf8",glow:"#60a5fa",special:"Blue Explosion",desc:"Blue Explosion: a huge blue blast + 50% more damage for a while."},
+ {id:"shin",name:"Shin Godzilla 2016",emoji:"🟣🦖",color:"#18181b",accent:"#a855f7",glow:"#ef4444",special:"Smoke → Fire → Beam → Back Beams",desc:"First smoke, then fire, then a beam, then beams from its back!"},
+ {id:"ultima",name:"Godzilla Ultima",emoji:"🔴✨",color:"#450a0a",accent:"#f43f5e",glow:"#fb7185",special:"Red Smoke 321 → Blue Circles 1000",desc:"Red smoke does 321 damage, then a beam firing blue circles does 1000 damage!"},
+ {id:"eva",name:"Shin Eva Godzilla",emoji:"🟢🟣",color:"#14532d",accent:"#a78bfa",glow:"#4ade80",special:"Teleport",desc:"Teleports right in front of the enemy — SURPRISE!"},
+ {id:"exe",name:"Godzilla Exe",emoji:"⚫🔴",color:"#111827",accent:"#dc2626",glow:"#991b1b",special:"Huge Beam From Hand",desc:"A HUGE beam fired from its hand."},
+ {id:"gold",name:"Golden Godzilla ???",emoji:"🌟🦖",color:"#713f12",accent:"#facc15",glow:"#fde047",special:"Golden Roar",desc:"MYSTERY Godzilla! Unlock it with 10 total kills.",locked:true}
+];
+let save={totalKills:0,wins:0,battles:0};
+try{const s=localStorage.getItem("godzillaBattleSaveV1");if(s)save=JSON.parse(s)}catch(e){}
+function persist(){try{localStorage.setItem("godzillaBattleSaveV1",JSON.stringify(save))}catch(e){}}
+function unlocked(r){return !r.locked||save.totalKills>=10}
+
+let selected="thermo",mode="royale",mapName="tokyo",botNum=6;
+function renderChars(){
+ $("charGrid").innerHTML=ROSTER.map(r=>{
+  const un=unlocked(r);
+  return `<div class="card ${selected===r.id?"sel":""} ${un?"":"locked"}" data-char="${r.id}">
+   <div class="kaijuIcon">${un?r.emoji:"🔒"}</div><h3>${un?r.name:"??? Locked ???"}</h3>
+   <p>${un?("<b>Special:</b> "+r.special):"Get 10 total kills to unlock!"}</p>
+   <div class="rarity">${un?"FREE ⭐ Rarity: Mattia to decide":"LOCKED"}</div></div>`}).join("");
+ document.querySelectorAll("[data-char]").forEach(el=>el.onclick=()=>{const r=ROSTER.find(x=>x.id===el.dataset.char);if(!unlocked(r)){toast("🔒 Locked! Get 10 total kills to unlock this Godzilla.");return}selected=r.id;renderChars()});
+ $("metaLine").textContent=`⭐ Total kills: ${save.totalKills}  •  🏆 Wins: ${save.wins}  •  ⚔️ Battles: ${save.battles}  •  Next unlock at 10 total kills ${save.totalKills>=10?"— UNLOCKED! 🌟":"("+(10-save.totalKills)+" to go)"}`;
+}
+function renderGram(){
+ $("gramMeta").textContent=`Total kills: ${save.totalKills} • Wins: ${save.wins} • Every 10 kills = a new Godzilla!`;
+ $("gramGrid").innerHTML=ROSTER.map(r=>{const un=unlocked(r);return `<div class="card gramCard ${un?"":"locked"}"><div class="kaijuIcon">${un?r.emoji:"🔒"}</div><h3 style="text-align:center">${un?r.name:"??? Mystery Godzilla ???"}</h3><p>${un?r.desc:"Keep fighting! 10 total kills unlocks this Godzilla."}</p><div class="rarity">Rarity: Common → Rare → Epic → Legend → APEX (Mattia to decide this one)</div></div>`}).join("");
+}
+renderChars();
+
+document.querySelectorAll("[data-mode]").forEach(b=>b.onclick=()=>{mode=b.dataset.mode;document.querySelectorAll("[data-mode]").forEach(x=>x.classList.toggle("sel",x===b));$("botRow").style.display=mode==="bots"?"flex":"none";if(mode==="practice")setMap("practice");if(mode==="bots")setMap(mapName==="practice"?"tokyo":mapName)});
+document.querySelectorAll("[data-map]").forEach(b=>b.onclick=()=>setMap(b.dataset.map));
+function setMap(m){mapName=m;document.querySelectorAll("[data-map]").forEach(x=>x.classList.toggle("sel",x.dataset.map===m))}
+$("botMinus").onclick=()=>{botNum=Math.max(1,botNum-1);$("botCount").textContent=botNum+" bots"};
+$("botPlus").onclick=()=>{botNum=Math.min(6,botNum+1);$("botCount").textContent=botNum+" bots"};
+$("gramBtn").onclick=()=>{renderGram();show("gram")};
+$("gramBack").onclick=()=>show("menu");
+$("howBtn").onclick=()=>show("how");
+$("howBack").onclick=()=>show("menu");
+function show(id){["menu","gram","how","death","win"].forEach(s=>$(s).classList.toggle("hidden",s!==id));const inGame=!id;$("hud").classList.toggle("hidden",!inGame);$("controls").classList.toggle("hidden",!inGame)}
+function toast(t,ms=2600){const el=$("toast");el.textContent=t;el.style.display="block";clearTimeout(toast._t);toast._t=setTimeout(()=>el.style.display="none",ms)}
+function center(t,ms=1300){const el=$("centerMsg");el.textContent=t;el.classList.remove("hidden");clearTimeout(center._t);center._t=setTimeout(()=>el.classList.add("hidden"),ms)}
+function confetti(){const w=$("win");w.querySelectorAll(".confetti").forEach(e=>e.remove());const em=["🎉","⭐","🔥","🦖","🏆","💥","✨"];for(let i=0;i<70;i++){const sp=document.createElement("span");sp.className="confetti";sp.textContent=em[i%em.length];sp.style.left=(Math.random()*98)+"%";sp.style.fontSize=(18+Math.random()*26)+"px";sp.style.animationDuration=(1.6+Math.random()*2.2)+"s";sp.style.animationDelay=(Math.random()*.8)+"s";w.appendChild(sp)}}
+
+
+/* ---------- SOUND (made by the iPad itself — no files needed) ---------- */
+let AC=null,soundOn=true,lastSfx=0;
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){AC=null}}if(AC&&AC.state==="suspended")AC.resume();return AC}
+function tone(f0,f1,dur,type,vol,delay){const a=ac();if(!a||!soundOn)return;try{const o=a.createOscillator(),g=a.createGain(),t=a.currentTime+(delay||0);o.type=type;o.frequency.setValueAtTime(f0,t);o.frequency.exponentialRampToValueAtTime(Math.max(28,f1),t+dur);g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+dur+.03)}catch(e){}}
+function noiseSfx(dur,vol,freq,delay){const a=ac();if(!a||!soundOn)return;try{const len=a.sampleRate*dur,buf=a.createBuffer(1,len,a.sampleRate),d=buf.getChannelData(0);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*(1-i/len);const src=a.createBufferSource();src.buffer=buf;const f=a.createBiquadFilter();f.type="lowpass";f.frequency.value=freq;const g=a.createGain();g.gain.value=vol;src.connect(f);f.connect(g);g.connect(a.destination);src.start(a.currentTime+(delay||0))}catch(e){}}
+function sfx(name){const nowMs=performance.now();if(name==="hit"&&nowMs-lastSfx<90)return;if(name==="hit")lastSfx=nowMs;
+ if(name==="roar"){tone(170,38,.8,"sawtooth",.5);tone(120,30,.9,"square",.28,.05);noiseSfx(.7,.30,500)}
+ else if(name==="shoot"){tone(760,140,.16,"square",.13)}
+ else if(name==="hit"){tone(210,75,.09,"square",.11)}
+ else if(name==="boom"){noiseSfx(.55,.5,320);tone(130,28,.55,"sine",.5)}
+ else if(name==="bigboom"){noiseSfx(.9,.6,240);tone(100,22,.9,"sine",.6);tone(170,38,.8,"sawtooth",.3,.05)}
+ else if(name==="special"){tone(180,1400,.45,"sawtooth",.2);tone(90,700,.5,"square",.12,.05)}
+ else if(name==="teleport"){tone(280,1500,.28,"sine",.25)}
+ else if(name==="level"){tone(440,440,.12,"square",.2);tone(660,660,.12,"square",.2,.11);tone(880,880,.22,"square",.22,.22)}
+ else if(name==="win"){ [523,659,784,1046].forEach((f,i)=>tone(f,f,.28,"square",.22,i*.15)); noiseSfx(.4,.15,1200,.65)}
+ else if(name==="lose"){tone(320,55,1.0,"sawtooth",.3)}
+ else if(name==="count"){tone(440,440,.14,"square",.2)}
+ else if(name==="boss"){tone(90,32,1.2,"sawtooth",.55);noiseSfx(1.0,.4,300);tone(65,28,1.2,"square",.3,.1)}
+}
+
+/* ---------- GAME ---------- */
+let WORLD={w:2300,h:1700};
+const MAP_SIZES={tokyo:{w:2300,h:1700},volcano:{w:2100,h:1600},ice:{w:2500,h:1800},desert:{w:2500,h:1800},practice:{w:1900,h:1400}};
+let ents=[],projs=[],parts=[],texts=[],beams=[],clouds=[],player=null,running=false,last=0,shake=0,slowT=0,freezeT=0,bossSpawned=false,bossRef=null,lastPlayerHit=0,flashA=0,zone={x:1150,y:850,r:1450},zoneT=0,spawnT=0,teamScore={red:0,blue:0},cam={x:0,y:0};
+const BOSS_DEF={id:"boss",name:"APEX GODZILLA",emoji:"👹🦖",color:"#7f1d1d",accent:"#facc15",glow:"#ef4444",special:"All the specials!"};
+const rand=(a,b)=>a+Math.random()*(b-a);
+const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+function charById(id){return ROSTER.find(r=>r.id===id)}
+function setDir(e,dx,dy){const m=Math.hypot(dx,dy);if(m>0.01){e.dirX=dx/m;e.dirY=dy/m;e.face=e.dirX>=0?1:-1}}
+function beamHit(e,t,range,width){const dx=t.x-e.x,dy=t.y-e.y;const along=dx*e.dirX+dy*e.dirY;const perp=Math.abs(dx*(-e.dirY)+dy*e.dirX);return along>0&&along<range&&perp<width}
+function makeEnt(x,y,def,isPlayer,team){
+ return {x,y,vx:0,vy:0,r:26,hp:1000,maxhp:1000,def,isPlayer:!!isPlayer,team:team||"solo",face:1,dirX:1,dirY:0,atkCd:0,sp: isPlayer?35:0,specialCd:0,buffUntil:0,buffMult:1,level:1,xp:0,kills:0,aiT:rand(0,.4),wander:rand(0,Math.PI*2),dead:false,name:isPlayer?def.name:def.name.replace("Godzilla ","G. "),stun:0,combo:0,comboT:0,bossT:rand(2,4)}
+}
+function obstacles(){
+ let list;
+ if(mapName==="tokyo")list=[{x:300,y:260,w:130,h:100},{x:1750,y:240,w:150,h:110},{x:1050,y:650,w:170,h:120},{x:420,y:1150,w:140,h:100},{x:1700,y:1150,w:130,h:100},{x:1100,y:180,w:100,h:170},{x:650,y:1450,w:150,h:90},{x:1950,y:700,w:120,h:140}];
+ else if(mapName==="volcano")list=[{x:950,y:710,w:200,h:180},{x:300,y:300,w:100,h:100},{x:1650,y:1150,w:110,h:110},{x:300,y:1250,w:120,h:90},{x:1700,y:300,w:90,h:120}];
+ else if(mapName==="ice")list=[{x:350,y:300,w:150,h:110},{x:1100,y:220,w:120,h:90},{x:1950,y:350,w:160,h:120},{x:600,y:900,w:140,h:100},{x:1500,y:950,w:180,h:120},{x:2050,y:1300,w:130,h:100},{x:400,y:1450,w:160,h:110},{x:1050,y:1450,w:110,h:90}];
+ else if(mapName==="desert")list=[{x:380,y:320,w:140,h:110},{x:1200,y:260,w:110,h:90},{x:2000,y:380,w:150,h:120},{x:650,y:950,w:170,h:120},{x:1550,y:900,w:130,h:100},{x:2100,y:1350,w:150,h:110},{x:450,y:1480,w:140,h:100},{x:1100,y:1500,w:120,h:90}];
+ else list=[{x:870,y:620,w:160,h:80},{x:350,y:350,w:90,h:90},{x:1450,y:1000,w:90,h:90},{x:1450,y:300,w:100,h:80},{x:350,y:1050,w:100,h:80}];
+ return list.map(o=>({...o,hp:320,maxhp:320}));
+}
+function damageObs(o,amt,src){if(!o||o.hp<=0)return;o.hp-=amt;if(o.hp<=0){o.hp=0;explode(o.x+o.w/2,o.y+o.h/2,"#f59e0b",42);explode(o.x+o.w/2,o.y+o.h/2,"#94a3b8",30);shake=Math.max(shake,9);sfx("boom");texts.push({x:o.x+o.w/2,y:o.y-8,t:"💥 BUILDING DESTROYED!",life:1200,color:"#fbbf24",size:20})}}
+let obs=[];
+function spawnPos(){for(let i=0;i<60;i++){const x=rand(90,WORLD.w-90),y=rand(90,WORLD.h-90);if(!obs.some(o=>x>o.x-50&&x<o.x+o.w+50&&y>o.y-50&&y<o.y+o.h+50))return{x,y}}return{x:100,y:100}}
+function startGame(){
+ save.battles++;persist();
+ const sz=MAP_SIZES[mapName]||MAP_SIZES.tokyo;WORLD={w:sz.w,h:sz.h};
+ const pdef=charById(selected);obs=obstacles();ents=[];projs=[];parts=[];texts=[];beams=[];clouds=[];zone={x:WORLD.w/2,y:WORLD.h/2,r:Math.max(WORLD.w,WORLD.h)*0.62};zoneT=0;teamScore={red:0,blue:0};shake=0;slowT=0;bossSpawned=false;bossRef=null;$("vig").style.opacity=0;
+ const ps=spawnPos();player=makeEnt(ps.x,ps.y,pdef,true,mode==="team"||mode==="party"?"red":"solo");ents.push(player);
+ const enemyDefs=ROSTER.filter(r=>!r.locked);
+ function addEnemy(team){const s=spawnPos();const d=enemyDefs[Math.floor(Math.random()*enemyDefs.length)];const e=makeEnt(s.x,s.y,d,false,team||"solo");e.sp=rand(20,70);ents.push(e);return e}
+ if(mode==="royale"){for(let i=0;i<34;i++)addEnemy("solo");center("👑 35 FIGHTERS!\nBe the last Godzilla standing!")}
+ else if(mode==="bots"){for(let i=0;i<botNum;i++)addEnemy("solo");center("🤖 BOTS MODE\nBeat all "+botNum+" bots!")}
+ else if(mode==="team"){for(let i=0;i<5;i++){const s=spawnPos();const a=makeEnt(s.x,s.y,enemyDefs[i%enemyDefs.length],false,"red");a.sp=40;ents.push(a)}for(let i=0;i<6;i++)addEnemy("blue");center("🔴 RED vs BLUE 🔵\nBeat the BLUE team!")}
+ else if(mode==="party"){for(let i=0;i<2;i++){const s=spawnPos();const a=makeEnt(s.x,s.y,enemyDefs[(i+2)%enemyDefs.length],false,"red");a.sp=40;ents.push(a)}for(let i=0;i<9;i++)addEnemy("blue");center("🎉 PARTY MODE!\nYou + 2 teammates vs 9!")}
+ else if(mode==="boss"){spawnApexBoss(false);center("👹 APEX BOSS FIGHT!\nBeat the GIANT APEX GODZILLA!")}
+ else {for(let i=0;i<3;i++)addEnemy("solo");center("🎯 PRACTICE\nTargets come back — try every Special!")}
+ show(null);running=true;last=performance.now();updateHud();
+ freezeT=1.8;center("3",520);sfx("count");
+ setTimeout(()=>{if(running){center("2",520);sfx("count")}},600);
+ setTimeout(()=>{if(running){center("1",520);sfx("count")}},1200);
+ setTimeout(()=>{if(running){center("🦖 FIGHT! 💥",800);sfx("roar");setTimeout(()=>{if(running)center({royale:"👑 Be the LAST Godzilla standing!",boss:"👹 Beat the giant APEX BOSS!",team:"🔴 RED team — beat BLUE!",party:"🎉 Party team — beat all 9!",bots:"🤖 Beat all the bots!",practice:"🎯 Practice — try every Special!"}[mode]||"",1400)},900)}},1800);
+}
+function spawnApexBoss(announce){
+ let pos={x:zone.x,y:zone.y};for(let i=0;i<40;i++){const c=spawnPos();if(!player||Math.hypot(c.x-player.x,c.y-player.y)>380){pos=c;break}}
+ const b=makeEnt(pos.x,pos.y,BOSS_DEF,false,"solo");b.isBoss=true;b.big=2.7;b.r=70;b.maxhp=4200;b.hp=4200;b.level=50;b.name="👹 APEX GODZILLA";b.sp=60;ents.push(b);bossRef=b;bossSpawned=true;
+ if(announce){center("⚠️ THE APEX BOSS IS HERE! 👹",2200);sfx("boss");shake=Math.max(shake,20)}
+ return b;
+}
+$("playBtn").onclick=()=>{ac();startGame()};
+$("retryBtn").onclick=startGame;
+$("winAgainBtn").onclick=startGame;
+$("deathMenuBtn").onclick=()=>{running=false;renderChars();show("menu")};
+$("winMenuBtn").onclick=()=>{running=false;renderChars();show("menu")};
+
+function damage(src,tgt,amt,label){
+ if(tgt.dead||!running)return;
+ if(src&&src.buffUntil>performance.now())amt*=src.buffMult;
+ amt=Math.round(amt);tgt.hp-=amt;if(tgt===player){lastPlayerHit=performance.now();sfx("hit")}else if(src===player)sfx("hit");
+ texts.push({x:tgt.x+rand(-14,14),y:tgt.y-38,t:(label||"-"+amt),life:800,color:src===player?"#ffd83d":"#fca5a5",size:src===player?19:15});
+ if(src===player){player.sp=Math.min(100,player.sp+4)}
+ if(tgt.hp<=0&&!tgt.dead){tgt.dead=true;explode(tgt.x,tgt.y,tgt.def.accent,34);sfx(tgt.isBoss?"bigboom":"boom");shake=Math.max(shake,tgt.isBoss?22:(src===player?11:6));if(src===player){slowT=Math.max(slowT,.30);src.combo=(src.comboT>0?src.combo+1:1);src.comboT=4;if(src.combo>=2)texts.push({x:src.x,y:src.y-80,t:"🔥 COMBO x"+src.combo+"!",life:1100,color:"#fb923c",size:26});if(src.combo>=3)toast("🔥🔥 COMBO x"+src.combo+"!! Mattia is on FIRE!")}
+   if(src){src.kills++;src.xp++;if(src.xp>=3){src.xp=0;src.level++;src.maxhp+=60;src.hp=Math.min(src.maxhp,src.hp+180);if(src===player){toast("⬆️ LEVEL UP! You are now Level "+src.level+" — stronger and healed!");sfx("level")}}}
+   if(tgt.team==="blue")teamScore.red++;if(tgt.team==="red"&&tgt!==player)teamScore.blue++;
+   if(src===player){save.totalKills++;persist();if(save.totalKills===10)toast("🌟 NEW GODZILLA UNLOCKED in the Godzillagram!",4200)}
+   if(tgt===player){gameOver(false)}
+ }
+ updateHud();
+}
+function explode(x,y,color,n){for(let i=0;i<n;i++){const a=rand(0,Math.PI*2),s=rand(40,260);parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:rand(300,750),color,size:rand(2,6)})}}
+function attack(e){
+ if(e.atkCd>0||e.dead)return;e.atkCd=e.isPlayer?260:rand(550,900);
+ const speed=520;const hx=e.x+e.dirX*24,hy=e.y+e.dirY*24;projs.push({x:hx,y:hy,vx:e.dirX*speed,vy:e.dirY*speed,src:e,color:e.def.accent,dmg:e.isBoss?42:(e.isPlayer?34:20),r:e.isBoss?16:9,life:650});if(e.isPlayer)sfx("shoot");
+ parts.push({x:hx,y:hy,vx:e.dirX*80,vy:e.dirY*80,life:180,color:e.def.glow,size:7});
+}
+function useSpecial(e){
+ if(e.dead)return;
+ if(e.isPlayer&&(e.sp<100))return;
+ if(!e.isPlayer&&e.specialCd>0)return;
+ e.sp=0;e.specialCd=6000;const now=performance.now();const id=e.def.id;if(e===player)sfx(id==="eva"?"teleport":"special");
+ const enemies=()=>ents.filter(t=>!t.dead&&t!==e&&(e.team==="solo"||t.team!==e.team));
+ if(id==="thermo"||id==="super"){
+   const col=id==="thermo"?"#ef4444":"#38bdf8";explode(e.x,e.y,col,70);beams.push({ring:true,x:e.x,y:e.y,r:20,maxr:190,life:350,color:col});
+   enemies().forEach(t=>{if(dist(e,t)<200)damage(e,t,150)});obs.forEach(o=>{if(Math.hypot(o.x+o.w/2-e.x,o.y+o.h/2-e.y)<235)damageObs(o,190,e)});shake=Math.max(shake,13);e.buffUntil=now+8000;e.buffMult=1.5;if(e===player)toast((id==="thermo"?"🔴 RED":"🔵 BLUE")+" EXPLOSION! +50% damage for 8 seconds!");
+ } else if(id==="shin"){
+   if(e===player)toast("🟣 SMOKE → FIRE → BEAM → BACK BEAMS!");
+   clouds.push({x:e.x+e.dirX*90,y:e.y+e.dirY*90,life:2600,team:e.team,src:e,color:"rgba(120,120,120,.5)",dmgT:0,kind:"smoke"});
+   setTimeout(()=>{if(running&&!e.dead){beams.push({x1:e.x,y1:e.y,x2:e.x+e.dirX*430,y2:e.y+e.dirY*430,life:550,color:"#c084fc",w:20});enemies().forEach(t=>{if(beamHit(e,t,440,55))damage(e,t,120)})}},700);
+   setTimeout(()=>{if(running&&!e.dead){for(let k=-2;k<=2;k++){beams.push({x1:e.x,y1:e.y,x2:e.x+Math.cos(k*.45)*330,y2:e.y+Math.sin(k*.45)*330,life:450,color:"#f472b6",w:9})}enemies().forEach(t=>{if(dist(e,t)<340)damage(e,t,80)})}},1500);
+ } else if(id==="ultima"){
+   if(e===player)toast("🔴 RED SMOKE: 321 DAMAGE! Then BLUE CIRCLES: 1000!");
+   clouds.push({x:e.x+e.dirX*80,y:e.y+e.dirY*80,life:1500,team:e.team,src:e,color:"rgba(239,68,68,.55)",dmgT:0,kind:"ultima"});
+   setTimeout(()=>{if(running&&!e.dead){for(let i=0;i<5;i++){const base=Math.atan2(e.dirY,e.dirX)+(i-2)*0.22;const spd=360+i*35;projs.push({x:e.x+e.dirX*30,y:e.y+e.dirY*30,vx:Math.cos(base)*spd,vy:Math.sin(base)*spd,src:e,color:"#38bdf8",dmg:70,r:15,life:950,big:true})}}},900);
+ } else if(id==="eva"){
+   const ts=enemies().sort((a,b)=>dist(e,a)-dist(e,b));if(ts.length){const t=ts[0];e.x=t.x+(t.dirX||1)*58;e.y=t.y+(t.dirY||0)*58;setDir(e,t.x-e.x,t.y-e.y);explode(e.x,e.y,"#a78bfa",35);damage(e,t,130);if(e===player)toast("🟣 TELEPORT! Surprise attack!")}
+ } else if(id==="exe"){
+   beams.push({x1:e.x+e.dirX*26,y1:e.y+e.dirY*26,x2:e.x+e.dirX*560,y2:e.y+e.dirY*560,life:600,color:"#ef4444",w:34});
+   enemies().forEach(t=>{if(beamHit(e,t,570,62))damage(e,t,250)});explode(e.x+e.dirX*80,e.y+e.dirY*80,"#ef4444",30);shake=Math.max(shake,10);if(e===player)toast("⚫ HUGE BEAM FROM HAND!");
+ } else { // gold
+   explode(e.x,e.y,"#facc15",60);enemies().forEach(t=>{if(dist(e,t)<230)damage(e,t,180)});obs.forEach(o=>{if(Math.hypot(o.x+o.w/2-e.x,o.y+o.h/2-e.y)<250)damageObs(o,190,e)});shake=Math.max(shake,13);if(e===player)toast("🌟 GOLDEN ROAR!");
+ }
+ updateHud();
+}
+
+/* Input */
+let joyVec={x:0,y:0},keys={},atkHeld=false;
+const joy=$("joy"),stick=$("stick");let joyId=null;
+function joyMove(t){const r=joy.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;let dx=t.clientX-cx,dy=t.clientY-cy;const m=Math.hypot(dx,dy),max=46;if(m>max){dx*=max/m;dy*=max/m}stick.style.left=(37+dx)+"px";stick.style.top=(37+dy)+"px";joyVec={x:dx/max,y:dy/max}}
+joy.addEventListener("touchstart",e=>{e.preventDefault();joyId=e.changedTouches[0].identifier;joyMove(e.changedTouches[0])},{passive:false});
+window.addEventListener("touchmove",e=>{for(const t of e.changedTouches)if(t.identifier===joyId){e.preventDefault();joyMove(t)}},{passive:false});
+window.addEventListener("touchend",e=>{for(const t of e.changedTouches)if(t.identifier===joyId){joyId=null;joyVec={x:0,y:0};stick.style.left="37px";stick.style.top="37px"}});
+joy.addEventListener("mousedown",e=>{joyId="m";joyMove(e)});window.addEventListener("mousemove",e=>{if(joyId==="m")joyMove(e)});window.addEventListener("mouseup",()=>{if(joyId==="m"){joyId=null;joyVec={x:0,y:0};stick.style.left="37px";stick.style.top="37px"}});
+$("atkBtn").addEventListener("touchstart",e=>{e.preventDefault();atkHeld=true},{passive:false});$("atkBtn").addEventListener("touchend",()=>atkHeld=false);
+$("atkBtn").addEventListener("mousedown",()=>atkHeld=true);window.addEventListener("mouseup",()=>atkHeld=false);
+$("spBtn").addEventListener("touchstart",e=>{e.preventDefault();if(player)useSpecial(player)},{passive:false});
+$("spBtn").addEventListener("mousedown",()=>{if(player)useSpecial(player)});
+$("muteBtn").addEventListener("click",()=>{soundOn=!soundOn;$("muteBtn").textContent=soundOn?"🔊":"🔇";if(soundOn)sfx("level")});
+window.addEventListener("keydown",e=>{keys[e.key.toLowerCase()]=true;if((e.key===" "||e.key.toLowerCase()==="j"))atkHeld=true;if(e.key.toLowerCase()==="k"&&player)useSpecial(player);if([" ","arrowup","arrowdown"].includes(e.key.toLowerCase())||e.key===" ")e.preventDefault()});
+window.addEventListener("keyup",e=>{keys[e.key.toLowerCase()]=false;if(e.key===" "||e.key.toLowerCase()==="j")atkHeld=false});
+
+function updateHud(){
+ if(!player)return;
+ $("hudName").textContent=player.def.emoji+" "+player.def.name;
+ $("hpBar").style.width=Math.max(0,player.hp/player.maxhp*100)+"%";
+ $("spBar").style.width=player.sp+"%";
+ $("spBtn").classList.toggle("ready",player.sp>=100);
+ $("spBtn").innerHTML=player.sp>=100?"SPECIAL ⭐<br>READY!":"SPECIAL ⭐<br>"+Math.floor(player.sp)+"%";
+ const alive=ents.filter(e=>!e.dead).length;
+ $("hudAlive").textContent=mode==="practice"?"🎯 PRACTICE":alive+" ALIVE";
+ $("hudKills").textContent="Kills: "+player.kills+"  •  XP Lv "+player.level;
+ $("hudLevel").textContent=(player.buffUntil>performance.now()?"⚡ +50% DAMAGE! ":"")+(mode==="royale"?"Zone shrinking…":"");
+ $("hudMode").textContent={royale:"👑 BATTLE ROYALE",bots:"🤖 BOTS MODE",team:"🔴 RED vs BLUE 🔵",party:"🎉 PARTY MODE",practice:"🎯 PRACTICE",boss:"👹 APEX BOSS FIGHT"}[mode];
+ $("hudTotal").textContent="Total kills: "+save.totalKills;
+ $("hudTeam").textContent=mode==="boss"&&bossRef?("👹 APEX BOSS HP: "+Math.max(0,Math.ceil(bossRef.hp))+" / 4200"):((mode==="team"||mode==="party")?("RED "+teamScore.red+" — BLUE "+teamScore.blue):"");
+ $("vig").style.opacity=(!player||player.dead)?0:(player.hp<280?(.45+.28*Math.sin(Date.now()/160)).toFixed(2):(performance.now()-lastPlayerHit<260?.55:0));
+}
+function checkWin(){
+ if(!running||!player||player.dead)return;
+ if(mode==="practice")return;
+ const enemiesAlive=ents.filter(e=>!e.dead&&e!==player&&(player.team==="solo"||e.team!==player.team));
+ const hostiles=enemiesAlive.filter(e=>!(mode==="team"||mode==="party")||e.team==="blue");
+ if(hostiles.length===0)gameOver(true);
+}
+function gameOver(won){
+ if(!running)return;running=false;
+ if(won){sfx("win");confetti();save.wins++;persist();$("winStats").innerHTML=`You were the LAST Godzilla standing with <b>${player.def.name}</b>!<br>Kills this battle: ${player.kills} • Level reached: ${player.level}<br>Total kills: ${save.totalKills} • Total wins: ${save.wins}`;show("win")}
+ else{sfx("lose");slowT=.9;$("deathStats").innerHTML=`Your <b>${player.def.name}</b> fought bravely!<br>Kills this battle: ${player.kills} • Level reached: ${player.level}<br>Total kills: ${save.totalKills}`;show("death")}
+ renderChars();
+}
+function step(dt){
+ const now=performance.now();
+ // player movement
+ let mx=joyVec.x,my=joyVec.y;
+ if(keys["a"]||keys["arrowleft"])mx-=1;if(keys["d"]||keys["arrowright"])mx+=1;if(keys["w"]||keys["arrowup"])my-=1;if(keys["s"]||keys["arrowdown"])my+=1;
+ const mm=Math.hypot(mx,my);if(mm>1){mx/=mm;my/=mm}
+ if(player&&!player.dead){player.vx=mx*292;player.vy=my*292;if(Math.hypot(mx,my)>.15)setDir(player,mx,my);if(atkHeld)attack(player)}
+ // AI + physics
+ for(const e of ents){
+   if(e.dead)continue;
+   e.atkCd=Math.max(0,e.atkCd-dt*1000);e.specialCd=Math.max(0,e.specialCd-dt*1000);
+   if(e!==player){
+     e.aiT-=dt;
+     const foes=ents.filter(t=>!t.dead&&t!==e&&(e.team==="solo"||t.team!==e.team));
+     foes.sort((a,b)=>dist(e,a)-dist(e,b));const t=foes[0];
+     if(t){const d=dist(e,t);setDir(e,t.x-e.x,t.y-e.y);
+       if(d>150){e.vx=(t.x-e.x)/d*205;e.vy=(t.y-e.y)/d*205}
+       else if(d<85){e.vx=-(t.x-e.x)/d*120;e.vy=-(t.y-e.y)/d*120}
+       else{e.vx=Math.sin(now/600+e.y)*55;e.vy=Math.cos(now/700+e.x)*55;if(Math.random()<dt*1.7)attack(e);if(e.sp>=100&&Math.random()<dt*.8){useSpecial(e)}}
+       if(mode==="royale"){const zd=Math.hypot(e.x-zone.x,e.y-zone.y);if(zd>zone.r){e.vx=(zone.x-e.x)/zd*210;e.vy=(zone.y-e.y)/zd*210}}
+     }
+     e.sp=Math.min(100,e.sp+dt*4.5);
+   } else e.sp=Math.min(100,e.sp+dt*2.2);
+   e.x=Math.max(30,Math.min(WORLD.w-30,e.x+e.vx*dt));e.y=Math.max(35,Math.min(WORLD.h-25,e.y+e.vy*dt));
+   for(const o of obs){if(o.hp>0&&e.x>o.x-e.r&&e.x<o.x+o.w+e.r&&e.y>o.y-e.r&&e.y<o.y+o.h+e.r){e.x-=e.vx*dt;e.y-=e.vy*dt}}
+ }
+ // combo timer
+ if(player&&player.comboT>0){player.comboT-=dt;if(player.comboT<=0)player.combo=0}
+ // APEX boss: appears in Battle Royale when only 10 are left
+ if(mode==="royale"&&!bossSpawned){const aliveN=ents.filter(e=>!e.dead).length;if(aliveN<=10&&aliveN>1)spawnApexBoss(true)}
+ // boss uses the other Godzillas' specials!
+ for(const e of ents){if(e.isBoss&&!e.dead){e.bossT-=dt;if(e.bossT<=0){e.bossT=rand(3.6,5.4);const bak=e.def;const pool=ROSTER.filter(r=>!r.locked);e.def=pool[Math.floor(Math.random()*pool.length)];e.specialCd=0;e.sp=100;useSpecial(e);e.def=bak;e.sp=55}}}
+ // zone
+ if(mode==="royale"&&running){zoneT+=dt;if(zoneT>7){zoneT=0;zone.r=Math.max(180,zone.r-115)}if(player&&!player.dead&&Math.hypot(player.x-zone.x,player.y-zone.y)>zone.r){if(Math.random()<dt*4)damage(null,player,14,"☠️ ZONE!")}}
+ // clouds (Shin smoke / Ultima red smoke)
+ for(const c of clouds){c.life-=dt*1000;c.dmgT-=dt*1000;if(c.dmgT<=0){c.dmgT=380;for(const t of ents){if(!t.dead&&t!==c.src&&(c.src.team==="solo"||t.team!==c.src.team)&&Math.hypot(t.x-c.x,t.y-c.y)<95)damage(c.src,t,c.kind==="ultima"?64:22)}}}
+ clouds=clouds.filter(c=>c.life>0);
+ // projectiles
+ for(const p of projs){p.x+=p.vx*dt;p.y+=p.vy*dt;p.life-=dt*1000;
+   if(Math.random()<.65)parts.push({x:p.x,y:p.y,vx:rand(-16,16),vy:rand(-16,16),life:230,color:p.color,size:p.big?5:3});
+   for(const o of obs){if(o.hp>0&&p.x>o.x&&p.x<o.x+o.w&&p.y>o.y&&p.y<o.y+o.h){damageObs(o,p.dmg,p.src);explode(p.x,p.y,"#f59e0b",7);p.life=0;break}}
+   if(p.life<=0)continue;
+   for(const t of ents){if(!t.dead&&t!==p.src&&(p.src.team==="solo"||t.team!==p.src.team)&&Math.hypot(t.x-p.x,t.y-(p.y))<t.r+p.r){damage(p.src,t,p.dmg);p.life=0;explode(p.x,p.y,p.color,8);break}}}
+ projs=projs.filter(p=>p.life>0&&p.x>0&&p.x<WORLD.w&&p.y>0&&p.y<WORLD.h);
+ for(const p of parts){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=.96;p.vy*=.96;p.life-=dt*1000}
+ parts=parts.filter(p=>p.life>0);
+ for(const t of texts)t.y-=dt*35,t.life-=dt*1000;
+ texts=texts.filter(t=>t.life>0);
+ for(const b of beams)b.life-=dt*1000;beams=beams.filter(b=>b.life>0);
+ // practice respawn
+ if(mode==="practice"){for(const e of ents)if(e.dead){e.dead=false;e.hp=e.maxhp;const s=spawnPos();e.x=s.x;e.y=s.y}}
+ if(player){cam.x=Math.max(0,Math.min(WORLD.w-W,player.x-W/2));cam.y=Math.max(0,Math.min(WORLD.h-H,player.y-H/2));if(WORLD.w<W)cam.x=(WORLD.w-W)/2;if(WORLD.h<H)cam.y=(WORLD.h-H)/2}
+ updateHud();checkWin();
+}
+function drawKaiju(e){
+ const S=e.big||1;const x=e.x-cam.x,y=e.y-cam.y;if(x<-95*S||x>W+95*S||y<-110*S||y>H+110*S)return;
+ ctx.save();ctx.translate(x,y);
+ // team ring
+ ctx.beginPath();ctx.ellipse(0,24*S,30*S,10*S,0,0,Math.PI*2);ctx.fillStyle=e.isPlayer?"rgba(255,216,61,.85)":(e.team==="red"?"rgba(239,68,68,.8)":e.team==="blue"?"rgba(59,130,246,.85)":"rgba(0,0,0,.35)");ctx.fill();
+ if(e.buffUntil>performance.now()){ctx.beginPath();ctx.arc(0,0,42*S,0,Math.PI*2);ctx.strokeStyle=e.def.accent;ctx.lineWidth=3;ctx.globalAlpha=.65;ctx.stroke();ctx.globalAlpha=1}
+ ctx.rotate(Math.atan2(e.dirY||0,e.dirX===undefined?1:e.dirX));ctx.scale(S,S);
+ // tail
+ ctx.beginPath();ctx.moveTo(-18,12);ctx.lineTo(-52,20);ctx.lineTo(-18,24);ctx.closePath();ctx.fillStyle=e.def.color;ctx.fill();
+ // body
+ ctx.beginPath();ctx.ellipse(0,2,27,24,0,0,Math.PI*2);ctx.fillStyle=e.def.color;ctx.fill();
+ ctx.beginPath();ctx.ellipse(3,8,19,16,0,0,Math.PI*2);ctx.fillStyle="rgba(255,255,255,.16)";ctx.fill();
+ // legs
+ ctx.fillStyle=e.def.color;ctx.fillRect(-16,18,11,13);ctx.fillRect(8,18,11,13);
+ // dorsal spikes
+ ctx.fillStyle=e.def.accent;for(let i=0;i<5;i++){const sx=-16+i*8;ctx.beginPath();ctx.moveTo(sx,-20-Math.sin(i)*3);ctx.lineTo(sx+4,-8);ctx.lineTo(sx-4,-8);ctx.closePath();ctx.fill()}
+ // head
+ ctx.beginPath();ctx.ellipse(24,-12,15,11,-.15,0,Math.PI*2);ctx.fillStyle=e.def.color;ctx.fill();
+ ctx.fillStyle="#fff";ctx.fillRect(30,-9,12,4); // teeth jaw hint
+ ctx.beginPath();ctx.arc(27,-16,3.4,0,Math.PI*2);ctx.fillStyle=e.def.id==="exe"?"#ff0000":"#ffd83d";ctx.fill();
+ ctx.beginPath();ctx.arc(27,-16,1.5,0,Math.PI*2);ctx.fillStyle="#000";ctx.fill();
+ // glow belly for thermo/super
+ if(e.def.id==="thermo"||e.def.id==="super"){ctx.beginPath();ctx.ellipse(2,6,10,12,0,0,Math.PI*2);ctx.fillStyle=e.def.glow;ctx.globalAlpha=.55+Math.sin(performance.now()/180)*.2;ctx.fill();ctx.globalAlpha=1}
+ ctx.restore();
+ // name + hp
+ ctx.fillStyle="rgba(0,0,0,.55)";ctx.fillRect(x-30*S,y-58*S,60*S,7);
+ ctx.fillStyle=e.hp/e.maxhp>.35?"#22c55e":e.hp/e.maxhp>.15?"#f59e0b":"#ef4444";ctx.fillRect(x-30*S,y-58*S,60*S*Math.max(0,e.hp/e.maxhp),7);
+ ctx.font="bold "+(e.isBoss?15:11)+"px Arial";ctx.textAlign="center";ctx.fillStyle="#fff";ctx.shadowColor="#000";ctx.shadowBlur=4;ctx.fillText((e.isPlayer?"⭐ ":"")+e.name,x,y-64*S);ctx.shadowBlur=0;
+}
+function draw(){
+ ctx.clearRect(0,0,W,H);
+ const _cx=cam.x,_cy=cam.y;if(shake>0){cam.x+=(Math.random()*2-1)*shake;cam.y+=(Math.random()*2-1)*shake}
+ const bg={tokyo:"#263449",volcano:"#3b241c",ice:"#2f5f7f",desert:"#7c5a2e",practice:"#274435"}[mapName]||"#263449";
+ ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+ // ground pattern
+ ctx.strokeStyle="rgba(255,255,255,.055)";ctx.lineWidth=1;
+ for(let gx=0;gx<WORLD.w;gx+=80){ctx.beginPath();ctx.moveTo(gx-cam.x,0-cam.y);ctx.lineTo(gx-cam.x,WORLD.h-cam.y);ctx.stroke()}
+ for(let gy=0;gy<WORLD.h;gy+=80){ctx.beginPath();ctx.moveTo(0-cam.x,gy-cam.y);ctx.lineTo(WORLD.w-cam.x,gy-cam.y);ctx.stroke()}
+ ctx.strokeStyle="#facc15";ctx.lineWidth=3;ctx.strokeRect(0-cam.x,0-cam.y,WORLD.w,WORLD.h);
+ if(mapName==="volcano"){ctx.beginPath();ctx.arc(WORLD.w/2-cam.x,WORLD.h/2-cam.y,110,0,Math.PI*2);ctx.fillStyle="#f97316";ctx.fill();ctx.beginPath();ctx.arc(WORLD.w/2-cam.x,WORLD.h/2-cam.y,66,0,Math.PI*2);ctx.fillStyle="#dc2626";ctx.fill()}
+ if(mapName==="ice"){ctx.beginPath();ctx.ellipse(WORLD.w/2-cam.x,WORLD.h/2-cam.y,320,200,0,0,Math.PI*2);ctx.fillStyle="rgba(186,230,253,.45)";ctx.fill();ctx.beginPath();ctx.ellipse(WORLD.w/2-cam.x,WORLD.h/2-cam.y,210,120,0,0,Math.PI*2);ctx.fillStyle="rgba(224,242,254,.5)";ctx.fill();ctx.strokeStyle="rgba(255,255,255,.5)";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(WORLD.w/2-140-cam.x,WORLD.h/2-40-cam.y);ctx.lineTo(WORLD.w/2-30-cam.x,WORLD.h/2+10-cam.y);ctx.lineTo(WORLD.w/2+90-cam.x,WORLD.h/2-25-cam.y);ctx.stroke()}
+ if(mapName==="desert"){ctx.fillStyle="rgba(0,0,0,.13)";[[.2,.3],[.68,.58],[.42,.86],[.85,.12]].forEach(d=>{ctx.beginPath();ctx.ellipse(WORLD.w*d[0]-cam.x,WORLD.h*d[1]-cam.y,190,52,0,0,Math.PI*2);ctx.fill()});ctx.beginPath();ctx.ellipse(WORLD.w*.82-cam.x,WORLD.h*.24-cam.y,85,42,0,0,Math.PI*2);ctx.fillStyle="rgba(56,189,248,.55)";ctx.fill()}
+ // obstacles
+ for(const o of obs){const ox=o.x-cam.x,oy=o.y-cam.y;if(o.hp<=0){ctx.fillStyle="rgba(71,85,105,.75)";ctx.beginPath();ctx.moveTo(ox,oy+o.h);ctx.lineTo(ox+o.w*.3,oy+o.h-16);ctx.lineTo(ox+o.w*.6,oy+o.h-9);ctx.lineTo(ox+o.w,oy+o.h);ctx.closePath();ctx.fill();continue}
+  const dmg=o.hp/o.maxhp;ctx.fillStyle=mapName==="ice"?"#dbeafe":mapName==="desert"?"#b45309":mapName==="tokyo"?(dmg<.5?"#475569":"#64748b"):"#57534e";ctx.fillRect(ox,oy,o.w,o.h);ctx.fillStyle="rgba(255,255,255,.22)";ctx.fillRect(ox,oy,o.w,10);
+  if(mapName==="tokyo"){ctx.fillStyle="#fde68a";for(let i=0;i<4;i++)ctx.fillRect(ox+12+i*26,oy+24,12,12)}
+  if(mapName==="desert"){ctx.fillStyle="#166534";ctx.fillRect(ox+o.w/2-4,oy-16,8,18);ctx.fillRect(ox+o.w/2-13,oy-8,7,10);ctx.fillRect(ox+o.w/2+6,oy-11,7,12)}
+  if(dmg<.66){ctx.strokeStyle="rgba(15,23,42,.85)";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(ox+o.w*.25,oy+6);ctx.lineTo(ox+o.w*.4,oy+o.h*.5);ctx.lineTo(ox+o.w*.3,oy+o.h-8);ctx.stroke()}
+  if(dmg<.33){ctx.beginPath();ctx.moveTo(ox+o.w*.7,oy+4);ctx.lineTo(ox+o.w*.58,oy+o.h*.55);ctx.lineTo(ox+o.w*.75,oy+o.h-6);ctx.stroke()}}
+ // clouds
+ for(const c of clouds){ctx.beginPath();ctx.arc(c.x-cam.x,c.y-cam.y,95,0,Math.PI*2);ctx.fillStyle=c.color;ctx.fill()}
+ // zone
+ if(mode==="royale"){ctx.beginPath();ctx.arc(zone.x-cam.x,zone.y-cam.y,zone.r,0,Math.PI*2);ctx.strokeStyle="#e879f9";ctx.lineWidth=5;ctx.stroke();ctx.beginPath();ctx.arc(zone.x-cam.x,zone.y-cam.y,zone.r+4000,0,Math.PI*2);ctx.arc(zone.x-cam.x,zone.y-cam.y,zone.r,0,Math.PI*2,true);ctx.fillStyle="rgba(168,85,247,.16)";ctx.fill()}
+ // beams
+ for(const b of beams){if(b.ring){ctx.beginPath();ctx.arc(b.x-cam.x,b.y-cam.y,b.maxr*(1-b.life/350)+20,0,Math.PI*2);ctx.strokeStyle=b.color;ctx.lineWidth=12;ctx.globalAlpha=Math.max(0,b.life/350);ctx.stroke();ctx.globalAlpha=1}else{ctx.beginPath();ctx.moveTo(b.x1-cam.x,b.y1-cam.y);ctx.lineTo(b.x2-cam.x,b.y2-cam.y);ctx.strokeStyle=b.color;ctx.lineWidth=b.w;ctx.lineCap="round";ctx.globalAlpha=.85;ctx.stroke();ctx.globalAlpha=1}}
+ // projectiles
+ for(const p of projs){ctx.beginPath();ctx.arc(p.x-cam.x,p.y-cam.y,p.r,0,Math.PI*2);ctx.fillStyle=p.color;ctx.shadowColor=p.color;ctx.shadowBlur=16;ctx.fill();ctx.shadowBlur=0}
+ // entities sorted by y
+ [...ents].filter(e=>!e.dead).sort((a,b)=>a.y-b.y).forEach(drawKaiju);
+ for(const p of parts){ctx.globalAlpha=Math.max(0,p.life/600);ctx.beginPath();ctx.arc(p.x-cam.x,p.y-cam.y,p.size,0,Math.PI*2);ctx.fillStyle=p.color;ctx.fill();ctx.globalAlpha=1}
+ ctx.textAlign="center";for(const t of texts){ctx.globalAlpha=Math.max(0,t.life/800);ctx.font="bold "+t.size+"px Arial";ctx.fillStyle=t.color;ctx.shadowColor="#000";ctx.shadowBlur=5;ctx.fillText(t.t,t.x-cam.x,t.y-cam.y);ctx.shadowBlur=0;ctx.globalAlpha=1}
+ // lightning over Tokyo
+ if(mapName==="tokyo"&&flashA<=0.02&&Math.random()<.004){flashA=.30;noiseSfx(.5,.10,180)}
+ if(flashA>0.02){ctx.fillStyle="rgba(255,255,255,"+flashA.toFixed(3)+")";ctx.fillRect(0,0,W,H);flashA*=.84}
+ cam.x=_cx;cam.y=_cy;
+}
+function loop(now){requestAnimationFrame(loop);const rdt=Math.min(.05,(now-last)/1000||0);last=now;if(slowT>0)slowT-=rdt;shake=Math.max(0,shake-rdt*48);
+ if(running){if(freezeT>0){freezeT-=rdt;draw()}else{step(rdt*(slowT>0?.35:1));draw()}}}
+requestAnimationFrame(loop);
+show("menu");
+</script>
+</body>
+</html>
