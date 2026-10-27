@@ -76,8 +76,8 @@ h1 span{color:#ffd83d}
 <div id="vig"></div>
 <div id="hud" class="hidden">
   <div class="hudBox"><div id="hudName">Godzilla</div><div id="hpWrap"><div id="hpBar"></div></div><div id="spWrap"><div id="spBar"></div></div><div style="font-size:11px;opacity:.85">SPECIAL</div></div>
-  <div class="hudBox" style="text-align:center"><div id="hudAlive">35 ALIVE</div><div id="hudKills">Kills: 0</div><div id="hudLevel">Level 1</div></div>
-  <div class="hudBox" style="text-align:right"><div id="hudMode">BATTLE ROYALE</div><div id="hudTotal">Total kills: 0</div><div class="teamScore" id="hudTeam"></div></div>
+  <div class="hudBox" style="text-align:center"><div id="hudAlive">35 ALIVE</div><div id="hudElims">Eliminations: 0</div><div id="hudLevel">Level 1</div></div>
+  <div class="hudBox" style="text-align:right"><div id="hudMode">BATTLE ROYALE</div><div id="hudTotal">Total eliminations: 0</div><div class="teamScore" id="hudTeam"></div></div>
 </div>
 <div id="toast"></div>
 <div id="centerMsg" class="hidden"></div>
@@ -96,7 +96,7 @@ h1 span{color:#ffd83d}
   <h1>GODZILLA<br><span>BATTLE</span></h1>
   <div class="badge gold" style="font-size:16px;margin-top:8px">✨ SPECTACULAR EDITION ✨</div>
   <div class="sub">35 fighters enter. 1 Godzilla remains.</div>
-  <div class="by">Designed by Mattia 🎮</div>
+  <div class="by">Designed by Mattia Caropreso 🎮</div>
   <div class="badges"><div class="badge green">🚫 NO ADS — EVER</div><div class="badge green">💸 NO PURCHASES — EVER</div><div class="badge gold">🏆 NEW PASS EVERY 31 DAYS</div><div class="badge">🗺️ NEW MAPS EVERY MONTH</div></div>
 
   <div class="section"><h2>1. Choose your Godzilla — all 6 are FREE</h2><div class="grid" id="charGrid"></div></div>
@@ -124,7 +124,7 @@ h1 span{color:#ffd83d}
     <button class="btn big" id="playBtn">▶ PLAY</button><br><br>
     <button class="btn gold" id="gramBtn">📸 GODZILLAGRAM — My Collection</button>
     <button class="btn grey" id="howBtn">❓ How to Play</button>
-    <p class="note">Move with the joystick (left) or WASD / arrow keys. Tap <b>ATOMIC ATTACK</b> to shoot. Fill the purple bar, then tap <b>SPECIAL</b> for your Godzilla's own special move!<br>Kills level you up. Every 10 total kills unlocks a NEW Godzilla. VSTAR at level 35 = +50% damage. VMAX at level 50 with 4 Godzillas = +100% damage.</p>
+    <p class="note">Move with the joystick (left) or WASD / arrow keys. Tap <b>ATOMIC ATTACK</b> to shoot. Fill the purple bar, then tap <b>SPECIAL</b> for your Godzilla's own special move!<br>Eliminations level you up. Every 10 total eliminations unlocks a NEW kind of Godzilla. VSTAR at level 35 = +50% damage. VMAX at level 50 with 4 Godzillas = +100% damage.</p>
     <p class="note" id="metaLine"></p>
   </div>
 </div>
@@ -147,20 +147,21 @@ h1 span{color:#ffd83d}
     ⭐ <b>Special:</b> purple button (or K) when the SPECIAL bar is full. Every Godzilla has a different special — Mattia designed them all.<br>
     ❤️ <b>Survive:</b> in Battle Royale the storm circle shrinks — stay inside it!<br>
     🏆 <b>Win:</b> be the last Godzilla standing, or beat the BLUE team in Team Fight.<br>
-    📈 <b>Level up:</b> every kill gives XP. Every 10 total kills unlocks a new Godzilla in the Godzillagram.<br>
-    💥 <b>Spectacular stuff:</b> buildings can be DESTROYED, kills go slow-motion, combos build up, lightning strikes Tokyo — and in Battle Royale, when only 10 fighters are left, the giant APEX BOSS appears!<br>
+    📈 <b>Level up:</b> every elimination gives XP. Every 10 total eliminations unlocks a new kind of Godzilla in the Godzillagram.<br>
+    💛 <b>Friendly battles:</b> an eliminated Godzilla is just OUT for that battle — nobody gets hurt, and everyone can play again straight away!<br>
+    💥 <b>Spectacular stuff:</b> buildings can be SMASHED, eliminations get a slow-motion replay, combos build up, lightning strikes Tokyo — and in Battle Royale, when only 10 fighters are left, the giant APEX BOSS appears!<br>
     🚫 <b>Mattia's rules:</b> no ads, no purchases, ever. Everything is earned by playing.
   </div>
   <br><button class="btn grey" id="howBack">← Back to Menu</button>
 </div>
 
-<!-- DEATH -->
-<div class="screen hidden" id="death" style="justify-content:center;text-align:center">
+<!-- OUT SCREEN -->
+<div class="screen hidden" id="out" style="justify-content:center;text-align:center">
   <div style="font-size:74px">💥</div>
   <h1 style="color:#f87171">YOU WERE<br>DEFEATED!</h1>
-  <p class="sub" id="deathStats"></p><br>
+  <p class="sub" id="outStats"></p><br>
   <button class="btn big" id="retryBtn">↻ RETRY</button><br>
-  <button class="btn grey" id="deathMenuBtn">🏠 GO BACK TO MENU</button>
+  <button class="btn grey" id="outMenuBtn">🏠 GO BACK TO MENU</button>
 </div>
 
 <!-- WIN -->
@@ -188,12 +189,12 @@ const ROSTER=[
  {id:"ultima",name:"Godzilla Ultima",emoji:"🔴✨",color:"#450a0a",accent:"#f43f5e",glow:"#fb7185",special:"Red Smoke 321 → Blue Circles 1000",desc:"Red smoke does 321 damage, then a beam firing blue circles does 1000 damage!"},
  {id:"eva",name:"Shin Eva Godzilla",emoji:"🟢🟣",color:"#14532d",accent:"#a78bfa",glow:"#4ade80",special:"Teleport",desc:"Teleports right in front of the enemy — SURPRISE!"},
  {id:"exe",name:"Godzilla Exe",emoji:"⚫🔴",color:"#111827",accent:"#dc2626",glow:"#991b1b",special:"Huge Beam From Hand",desc:"A HUGE beam fired from its hand."},
- {id:"gold",name:"Golden Godzilla ???",emoji:"🌟🦖",color:"#713f12",accent:"#facc15",glow:"#fde047",special:"Golden Roar",desc:"MYSTERY Godzilla! Unlock it with 10 total kills.",locked:true}
+ {id:"gold",name:"Golden Godzilla ???",emoji:"🌟🦖",color:"#713f12",accent:"#facc15",glow:"#fde047",special:"Golden Roar",desc:"MYSTERY Godzilla! Unlock it with 10 total eliminations.",locked:true}
 ];
-let save={totalKills:0,wins:0,battles:0};
-try{const s=localStorage.getItem("godzillaBattleSaveV1");if(s)save=JSON.parse(s)}catch(e){}
+let save={totalElims:0,wins:0,battles:0};
+try{const s=localStorage.getItem("godzillaBattleSaveV1");if(s)save=JSON.parse(s);if(typeof save.totalElims!=="number"){save.totalElims=0;for(const k in save){if(k.indexOf("total")===0&&k!=="totalElims"&&typeof save[k]==="number"){save.totalElims=save[k];delete save[k]}}}}catch(e){}
 function persist(){try{localStorage.setItem("godzillaBattleSaveV1",JSON.stringify(save))}catch(e){}}
-function unlocked(r){return !r.locked||save.totalKills>=10}
+function unlocked(r){return !r.locked||save.totalElims>=10}
 
 let selected="thermo",mode="royale",mapName="tokyo",botNum=6;
 function renderChars(){
@@ -201,14 +202,14 @@ function renderChars(){
   const un=unlocked(r);
   return `<div class="card ${selected===r.id?"sel":""} ${un?"":"locked"}" data-char="${r.id}">
    <div class="kaijuIcon">${un?r.emoji:"🔒"}</div><h3>${un?r.name:"??? Locked ???"}</h3>
-   <p>${un?("<b>Special:</b> "+r.special):"Get 10 total kills to unlock!"}</p>
+   <p>${un?("<b>Special:</b> "+r.special):"Get 10 total eliminations to unlock!"}</p>
    <div class="rarity">${un?"FREE ⭐ Rarity: Mattia to decide":"LOCKED"}</div></div>`}).join("");
- document.querySelectorAll("[data-char]").forEach(el=>el.onclick=()=>{const r=ROSTER.find(x=>x.id===el.dataset.char);if(!unlocked(r)){toast("🔒 Locked! Get 10 total kills to unlock this Godzilla.");return}selected=r.id;renderChars()});
- $("metaLine").textContent=`⭐ Total kills: ${save.totalKills}  •  🏆 Wins: ${save.wins}  •  ⚔️ Battles: ${save.battles}  •  Next unlock at 10 total kills ${save.totalKills>=10?"— UNLOCKED! 🌟":"("+(10-save.totalKills)+" to go)"}`;
+ document.querySelectorAll("[data-char]").forEach(el=>el.onclick=()=>{const r=ROSTER.find(x=>x.id===el.dataset.char);if(!unlocked(r)){toast("🔒 Locked! Get 10 total eliminations to unlock this Godzilla.");return}selected=r.id;renderChars()});
+ $("metaLine").textContent=`⭐ Total eliminations: ${save.totalElims}  •  🏆 Wins: ${save.wins}  •  ⚔️ Battles: ${save.battles}  •  Next unlock at 10 total eliminations ${save.totalElims>=10?"— UNLOCKED! 🌟":"("+(10-save.totalElims)+" to go)"}`;
 }
 function renderGram(){
- $("gramMeta").textContent=`Total kills: ${save.totalKills} • Wins: ${save.wins} • Every 10 kills = a new Godzilla!`;
- $("gramGrid").innerHTML=ROSTER.map(r=>{const un=unlocked(r);return `<div class="card gramCard ${un?"":"locked"}"><div class="kaijuIcon">${un?r.emoji:"🔒"}</div><h3 style="text-align:center">${un?r.name:"??? Mystery Godzilla ???"}</h3><p>${un?r.desc:"Keep fighting! 10 total kills unlocks this Godzilla."}</p><div class="rarity">Rarity: Common → Rare → Epic → Legend → APEX (Mattia to decide this one)</div></div>`}).join("");
+ $("gramMeta").textContent=`Total eliminations: ${save.totalElims} • Wins: ${save.wins} • Every 10 eliminations = a new kind of Godzilla!`;
+ $("gramGrid").innerHTML=ROSTER.map(r=>{const un=unlocked(r);return `<div class="card gramCard ${un?"":"locked"}"><div class="kaijuIcon">${un?r.emoji:"🔒"}</div><h3 style="text-align:center">${un?r.name:"??? Mystery Godzilla ???"}</h3><p>${un?r.desc:"Keep playing! 10 total eliminations unlocks this Godzilla."}</p><div class="rarity">Rarity: Common → Rare → Epic → Legend → APEX (Mattia to decide this one)</div></div>`}).join("");
 }
 renderChars();
 
@@ -221,7 +222,7 @@ $("gramBtn").onclick=()=>{renderGram();show("gram")};
 $("gramBack").onclick=()=>show("menu");
 $("howBtn").onclick=()=>show("how");
 $("howBack").onclick=()=>show("menu");
-function show(id){["menu","gram","how","death","win"].forEach(s=>$(s).classList.toggle("hidden",s!==id));const inGame=!id;$("hud").classList.toggle("hidden",!inGame);$("controls").classList.toggle("hidden",!inGame)}
+function show(id){["menu","gram","how","out","win"].forEach(s=>$(s).classList.toggle("hidden",s!==id));const inGame=!id;$("hud").classList.toggle("hidden",!inGame);$("controls").classList.toggle("hidden",!inGame)}
 function toast(t,ms=2600){const el=$("toast");el.textContent=t;el.style.display="block";clearTimeout(toast._t);toast._t=setTimeout(()=>el.style.display="none",ms)}
 function center(t,ms=1300){const el=$("centerMsg");el.textContent=t;el.classList.remove("hidden");clearTimeout(center._t);center._t=setTimeout(()=>el.classList.add("hidden"),ms)}
 function confetti(){const w=$("win");w.querySelectorAll(".confetti").forEach(e=>e.remove());const em=["🎉","⭐","🔥","🦖","🏆","💥","✨"];for(let i=0;i<70;i++){const sp=document.createElement("span");sp.className="confetti";sp.textContent=em[i%em.length];sp.style.left=(Math.random()*98)+"%";sp.style.fontSize=(18+Math.random()*26)+"px";sp.style.animationDuration=(1.6+Math.random()*2.2)+"s";sp.style.animationDelay=(Math.random()*.8)+"s";w.appendChild(sp)}}
@@ -258,7 +259,7 @@ function charById(id){return ROSTER.find(r=>r.id===id)}
 function setDir(e,dx,dy){const m=Math.hypot(dx,dy);if(m>0.01){e.dirX=dx/m;e.dirY=dy/m;e.face=e.dirX>=0?1:-1}}
 function beamHit(e,t,range,width){const dx=t.x-e.x,dy=t.y-e.y;const along=dx*e.dirX+dy*e.dirY;const perp=Math.abs(dx*(-e.dirY)+dy*e.dirX);return along>0&&along<range&&perp<width}
 function makeEnt(x,y,def,isPlayer,team){
- return {x,y,vx:0,vy:0,r:26,hp:1000,maxhp:1000,def,isPlayer:!!isPlayer,team:team||"solo",face:1,dirX:1,dirY:0,atkCd:0,sp: isPlayer?35:0,specialCd:0,buffUntil:0,buffMult:1,level:1,xp:0,kills:0,aiT:rand(0,.4),wander:rand(0,Math.PI*2),dead:false,name:isPlayer?def.name:def.name.replace("Godzilla ","G. "),stun:0,combo:0,comboT:0,bossT:rand(2,4)}
+ return {x,y,vx:0,vy:0,r:26,hp:1000,maxhp:1000,def,isPlayer:!!isPlayer,team:team||"solo",face:1,dirX:1,dirY:0,atkCd:0,sp: isPlayer?35:0,specialCd:0,buffUntil:0,buffMult:1,level:1,xp:0,elims:0,aiT:rand(0,.4),wander:rand(0,Math.PI*2),out:false,name:isPlayer?def.name:def.name.replace("Godzilla ","G. "),stun:0,combo:0,comboT:0,bossT:rand(2,4)}
 }
 function obstacles(){
  let list;
@@ -269,7 +270,7 @@ function obstacles(){
  else list=[{x:870,y:620,w:160,h:80},{x:350,y:350,w:90,h:90},{x:1450,y:1000,w:90,h:90},{x:1450,y:300,w:100,h:80},{x:350,y:1050,w:100,h:80}];
  return list.map(o=>({...o,hp:320,maxhp:320}));
 }
-function damageObs(o,amt,src){if(!o||o.hp<=0)return;o.hp-=amt;if(o.hp<=0){o.hp=0;explode(o.x+o.w/2,o.y+o.h/2,"#f59e0b",42);explode(o.x+o.w/2,o.y+o.h/2,"#94a3b8",30);shake=Math.max(shake,9);sfx("boom");texts.push({x:o.x+o.w/2,y:o.y-8,t:"💥 BUILDING DESTROYED!",life:1200,color:"#fbbf24",size:20})}}
+function damageObs(o,amt,src){if(!o||o.hp<=0)return;o.hp-=amt;if(o.hp<=0){o.hp=0;explode(o.x+o.w/2,o.y+o.h/2,"#f59e0b",42);explode(o.x+o.w/2,o.y+o.h/2,"#94a3b8",30);shake=Math.max(shake,9);sfx("boom");texts.push({x:o.x+o.w/2,y:o.y-8,t:"💥 BUILDING SMASHED!",life:1200,color:"#fbbf24",size:20})}}
 let obs=[];
 function spawnPos(){for(let i=0;i<60;i++){const x=rand(90,WORLD.w-90),y=rand(90,WORLD.h-90);if(!obs.some(o=>x>o.x-50&&x<o.x+o.w+50&&y>o.y-50&&y<o.y+o.h+50))return{x,y}}return{x:100,y:100}}
 function startGame(){
@@ -300,47 +301,47 @@ function spawnApexBoss(announce){
 $("playBtn").onclick=()=>{ac();startGame()};
 $("retryBtn").onclick=startGame;
 $("winAgainBtn").onclick=startGame;
-$("deathMenuBtn").onclick=()=>{running=false;renderChars();show("menu")};
+$("outMenuBtn").onclick=()=>{running=false;renderChars();show("menu")};
 $("winMenuBtn").onclick=()=>{running=false;renderChars();show("menu")};
 
 function damage(src,tgt,amt,label){
- if(tgt.dead||!running)return;
+ if(tgt.out||!running)return;
  if(src&&src.buffUntil>performance.now())amt*=src.buffMult;
  amt=Math.round(amt);tgt.hp-=amt;if(tgt===player){lastPlayerHit=performance.now();sfx("hit")}else if(src===player)sfx("hit");
  texts.push({x:tgt.x+rand(-14,14),y:tgt.y-38,t:(label||"-"+amt),life:800,color:src===player?"#ffd83d":"#fca5a5",size:src===player?19:15});
  if(src===player){player.sp=Math.min(100,player.sp+4)}
- if(tgt.hp<=0&&!tgt.dead){tgt.dead=true;explode(tgt.x,tgt.y,tgt.def.accent,34);sfx(tgt.isBoss?"bigboom":"boom");shake=Math.max(shake,tgt.isBoss?22:(src===player?11:6));if(src===player){slowT=Math.max(slowT,.30);src.combo=(src.comboT>0?src.combo+1:1);src.comboT=4;if(src.combo>=2)texts.push({x:src.x,y:src.y-80,t:"🔥 COMBO x"+src.combo+"!",life:1100,color:"#fb923c",size:26});if(src.combo>=3)toast("🔥🔥 COMBO x"+src.combo+"!! Mattia is on FIRE!")}
-   if(src){src.kills++;src.xp++;if(src.xp>=3){src.xp=0;src.level++;src.maxhp+=60;src.hp=Math.min(src.maxhp,src.hp+180);if(src===player){toast("⬆️ LEVEL UP! You are now Level "+src.level+" — stronger and healed!");sfx("level")}}}
+ if(tgt.hp<=0&&!tgt.out){tgt.out=true;explode(tgt.x,tgt.y,tgt.def.accent,34);sfx(tgt.isBoss?"bigboom":"boom");shake=Math.max(shake,tgt.isBoss?22:(src===player?11:6));if(src===player){slowT=Math.max(slowT,.30);src.combo=(src.comboT>0?src.combo+1:1);src.comboT=4;if(src.combo>=2)texts.push({x:src.x,y:src.y-80,t:"🔥 COMBO x"+src.combo+"!",life:1100,color:"#fb923c",size:26});if(src.combo>=3)toast("🔥🔥 COMBO x"+src.combo+"!! Mattia is UNSTOPPABLE!")}
+   if(src){src.elims++;src.xp++;if(src.xp>=3){src.xp=0;src.level++;src.maxhp+=60;src.hp=Math.min(src.maxhp,src.hp+180);if(src===player){toast("⬆️ LEVEL UP! You are now Level "+src.level+" — stronger and healed!");sfx("level")}}}
    if(tgt.team==="blue")teamScore.red++;if(tgt.team==="red"&&tgt!==player)teamScore.blue++;
-   if(src===player){save.totalKills++;persist();if(save.totalKills===10)toast("🌟 NEW GODZILLA UNLOCKED in the Godzillagram!",4200)}
+   if(src===player){save.totalElims++;persist();if(save.totalElims===10)toast("🌟 NEW GODZILLA UNLOCKED in the Godzillagram!",4200)}
    if(tgt===player){gameOver(false)}
  }
  updateHud();
 }
 function explode(x,y,color,n){for(let i=0;i<n;i++){const a=rand(0,Math.PI*2),s=rand(40,260);parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:rand(300,750),color,size:rand(2,6)})}}
 function attack(e){
- if(e.atkCd>0||e.dead)return;e.atkCd=e.isPlayer?260:rand(550,900);
+ if(e.atkCd>0||e.out)return;e.atkCd=e.isPlayer?260:rand(550,900);
  const speed=520;const hx=e.x+e.dirX*24,hy=e.y+e.dirY*24;projs.push({x:hx,y:hy,vx:e.dirX*speed,vy:e.dirY*speed,src:e,color:e.def.accent,dmg:e.isBoss?42:(e.isPlayer?34:20),r:e.isBoss?16:9,life:650});if(e.isPlayer)sfx("shoot");
  parts.push({x:hx,y:hy,vx:e.dirX*80,vy:e.dirY*80,life:180,color:e.def.glow,size:7});
 }
 function useSpecial(e){
- if(e.dead)return;
+ if(e.out)return;
  if(e.isPlayer&&(e.sp<100))return;
  if(!e.isPlayer&&e.specialCd>0)return;
  e.sp=0;e.specialCd=6000;const now=performance.now();const id=e.def.id;if(e===player)sfx(id==="eva"?"teleport":"special");
- const enemies=()=>ents.filter(t=>!t.dead&&t!==e&&(e.team==="solo"||t.team!==e.team));
+ const enemies=()=>ents.filter(t=>!t.out&&t!==e&&(e.team==="solo"||t.team!==e.team));
  if(id==="thermo"||id==="super"){
    const col=id==="thermo"?"#ef4444":"#38bdf8";explode(e.x,e.y,col,70);beams.push({ring:true,x:e.x,y:e.y,r:20,maxr:190,life:350,color:col});
    enemies().forEach(t=>{if(dist(e,t)<200)damage(e,t,150)});obs.forEach(o=>{if(Math.hypot(o.x+o.w/2-e.x,o.y+o.h/2-e.y)<235)damageObs(o,190,e)});shake=Math.max(shake,13);e.buffUntil=now+8000;e.buffMult=1.5;if(e===player)toast((id==="thermo"?"🔴 RED":"🔵 BLUE")+" EXPLOSION! +50% damage for 8 seconds!");
  } else if(id==="shin"){
    if(e===player)toast("🟣 SMOKE → FIRE → BEAM → BACK BEAMS!");
    clouds.push({x:e.x+e.dirX*90,y:e.y+e.dirY*90,life:2600,team:e.team,src:e,color:"rgba(120,120,120,.5)",dmgT:0,kind:"smoke"});
-   setTimeout(()=>{if(running&&!e.dead){beams.push({x1:e.x,y1:e.y,x2:e.x+e.dirX*430,y2:e.y+e.dirY*430,life:550,color:"#c084fc",w:20});enemies().forEach(t=>{if(beamHit(e,t,440,55))damage(e,t,120)})}},700);
-   setTimeout(()=>{if(running&&!e.dead){for(let k=-2;k<=2;k++){beams.push({x1:e.x,y1:e.y,x2:e.x+Math.cos(k*.45)*330,y2:e.y+Math.sin(k*.45)*330,life:450,color:"#f472b6",w:9})}enemies().forEach(t=>{if(dist(e,t)<340)damage(e,t,80)})}},1500);
+   setTimeout(()=>{if(running&&!e.out){beams.push({x1:e.x,y1:e.y,x2:e.x+e.dirX*430,y2:e.y+e.dirY*430,life:550,color:"#c084fc",w:20});enemies().forEach(t=>{if(beamHit(e,t,440,55))damage(e,t,120)})}},700);
+   setTimeout(()=>{if(running&&!e.out){for(let k=-2;k<=2;k++){beams.push({x1:e.x,y1:e.y,x2:e.x+Math.cos(k*.45)*330,y2:e.y+Math.sin(k*.45)*330,life:450,color:"#f472b6",w:9})}enemies().forEach(t=>{if(dist(e,t)<340)damage(e,t,80)})}},1500);
  } else if(id==="ultima"){
    if(e===player)toast("🔴 RED SMOKE: 321 DAMAGE! Then BLUE CIRCLES: 1000!");
    clouds.push({x:e.x+e.dirX*80,y:e.y+e.dirY*80,life:1500,team:e.team,src:e,color:"rgba(239,68,68,.55)",dmgT:0,kind:"ultima"});
-   setTimeout(()=>{if(running&&!e.dead){for(let i=0;i<5;i++){const base=Math.atan2(e.dirY,e.dirX)+(i-2)*0.22;const spd=360+i*35;projs.push({x:e.x+e.dirX*30,y:e.y+e.dirY*30,vx:Math.cos(base)*spd,vy:Math.sin(base)*spd,src:e,color:"#38bdf8",dmg:70,r:15,life:950,big:true})}}},900);
+   setTimeout(()=>{if(running&&!e.out){for(let i=0;i<5;i++){const base=Math.atan2(e.dirY,e.dirX)+(i-2)*0.22;const spd=360+i*35;projs.push({x:e.x+e.dirX*30,y:e.y+e.dirY*30,vx:Math.cos(base)*spd,vy:Math.sin(base)*spd,src:e,color:"#38bdf8",dmg:70,r:15,life:950,big:true})}}},900);
  } else if(id==="eva"){
    const ts=enemies().sort((a,b)=>dist(e,a)-dist(e,b));if(ts.length){const t=ts[0];e.x=t.x+(t.dirX||1)*58;e.y=t.y+(t.dirY||0)*58;setDir(e,t.x-e.x,t.y-e.y);explode(e.x,e.y,"#a78bfa",35);damage(e,t,130);if(e===player)toast("🟣 TELEPORT! Surprise attack!")}
  } else if(id==="exe"){
@@ -375,26 +376,26 @@ function updateHud(){
  $("spBar").style.width=player.sp+"%";
  $("spBtn").classList.toggle("ready",player.sp>=100);
  $("spBtn").innerHTML=player.sp>=100?"SPECIAL ⭐<br>READY!":"SPECIAL ⭐<br>"+Math.floor(player.sp)+"%";
- const alive=ents.filter(e=>!e.dead).length;
+ const alive=ents.filter(e=>!e.out).length;
  $("hudAlive").textContent=mode==="practice"?"🎯 PRACTICE":alive+" ALIVE";
- $("hudKills").textContent="Kills: "+player.kills+"  •  XP Lv "+player.level;
+ $("hudElims").textContent="Eliminations: "+player.elims+"  •  XP Lv "+player.level;
  $("hudLevel").textContent=(player.buffUntil>performance.now()?"⚡ +50% DAMAGE! ":"")+(mode==="royale"?"Zone shrinking…":"");
  $("hudMode").textContent={royale:"👑 BATTLE ROYALE",bots:"🤖 BOTS MODE",team:"🔴 RED vs BLUE 🔵",party:"🎉 PARTY MODE",practice:"🎯 PRACTICE",boss:"👹 APEX BOSS FIGHT"}[mode];
- $("hudTotal").textContent="Total kills: "+save.totalKills;
+ $("hudTotal").textContent="Total eliminations: "+save.totalElims;
  $("hudTeam").textContent=mode==="boss"&&bossRef?("👹 APEX BOSS HP: "+Math.max(0,Math.ceil(bossRef.hp))+" / 4200"):((mode==="team"||mode==="party")?("RED "+teamScore.red+" — BLUE "+teamScore.blue):"");
- $("vig").style.opacity=(!player||player.dead)?0:(player.hp<280?(.45+.28*Math.sin(Date.now()/160)).toFixed(2):(performance.now()-lastPlayerHit<260?.55:0));
+ $("vig").style.opacity=(!player||player.out)?0:(player.hp<280?(.45+.28*Math.sin(Date.now()/160)).toFixed(2):(performance.now()-lastPlayerHit<260?.55:0));
 }
 function checkWin(){
- if(!running||!player||player.dead)return;
+ if(!running||!player||player.out)return;
  if(mode==="practice")return;
- const enemiesAlive=ents.filter(e=>!e.dead&&e!==player&&(player.team==="solo"||e.team!==player.team));
+ const enemiesAlive=ents.filter(e=>!e.out&&e!==player&&(player.team==="solo"||e.team!==player.team));
  const hostiles=enemiesAlive.filter(e=>!(mode==="team"||mode==="party")||e.team==="blue");
  if(hostiles.length===0)gameOver(true);
 }
 function gameOver(won){
  if(!running)return;running=false;
- if(won){sfx("win");confetti();save.wins++;persist();$("winStats").innerHTML=`You were the LAST Godzilla standing with <b>${player.def.name}</b>!<br>Kills this battle: ${player.kills} • Level reached: ${player.level}<br>Total kills: ${save.totalKills} • Total wins: ${save.wins}`;show("win")}
- else{sfx("lose");slowT=.9;$("deathStats").innerHTML=`Your <b>${player.def.name}</b> fought bravely!<br>Kills this battle: ${player.kills} • Level reached: ${player.level}<br>Total kills: ${save.totalKills}`;show("death")}
+ if(won){sfx("win");confetti();save.wins++;persist();$("winStats").innerHTML=`You were the LAST Godzilla standing with <b>${player.def.name}</b>!<br>Eliminations this battle: ${player.elims} • Level reached: ${player.level}<br>Total eliminations: ${save.totalElims} • Total wins: ${save.wins}`;show("win")}
+ else{sfx("lose");slowT=.9;$("outStats").innerHTML=`Your <b>${player.def.name}</b> fought bravely!<br>Eliminations this battle: ${player.elims} • Level reached: ${player.level}<br>Total eliminations: ${save.totalElims}`;show("out")}
  renderChars();
 }
 function step(dt){
@@ -403,14 +404,14 @@ function step(dt){
  let mx=joyVec.x,my=joyVec.y;
  if(keys["a"]||keys["arrowleft"])mx-=1;if(keys["d"]||keys["arrowright"])mx+=1;if(keys["w"]||keys["arrowup"])my-=1;if(keys["s"]||keys["arrowdown"])my+=1;
  const mm=Math.hypot(mx,my);if(mm>1){mx/=mm;my/=mm}
- if(player&&!player.dead){player.vx=mx*292;player.vy=my*292;if(Math.hypot(mx,my)>.15)setDir(player,mx,my);if(atkHeld)attack(player)}
+ if(player&&!player.out){player.vx=mx*292;player.vy=my*292;if(Math.hypot(mx,my)>.15)setDir(player,mx,my);if(atkHeld)attack(player)}
  // AI + physics
  for(const e of ents){
-   if(e.dead)continue;
+   if(e.out)continue;
    e.atkCd=Math.max(0,e.atkCd-dt*1000);e.specialCd=Math.max(0,e.specialCd-dt*1000);
    if(e!==player){
      e.aiT-=dt;
-     const foes=ents.filter(t=>!t.dead&&t!==e&&(e.team==="solo"||t.team!==e.team));
+     const foes=ents.filter(t=>!t.out&&t!==e&&(e.team==="solo"||t.team!==e.team));
      foes.sort((a,b)=>dist(e,a)-dist(e,b));const t=foes[0];
      if(t){const d=dist(e,t);setDir(e,t.x-e.x,t.y-e.y);
        if(d>150){e.vx=(t.x-e.x)/d*205;e.vy=(t.y-e.y)/d*205}
@@ -426,20 +427,20 @@ function step(dt){
  // combo timer
  if(player&&player.comboT>0){player.comboT-=dt;if(player.comboT<=0)player.combo=0}
  // APEX boss: appears in Battle Royale when only 10 are left
- if(mode==="royale"&&!bossSpawned){const aliveN=ents.filter(e=>!e.dead).length;if(aliveN<=10&&aliveN>1)spawnApexBoss(true)}
+ if(mode==="royale"&&!bossSpawned){const aliveN=ents.filter(e=>!e.out).length;if(aliveN<=10&&aliveN>1)spawnApexBoss(true)}
  // boss uses the other Godzillas' specials!
- for(const e of ents){if(e.isBoss&&!e.dead){e.bossT-=dt;if(e.bossT<=0){e.bossT=rand(3.6,5.4);const bak=e.def;const pool=ROSTER.filter(r=>!r.locked);e.def=pool[Math.floor(Math.random()*pool.length)];e.specialCd=0;e.sp=100;useSpecial(e);e.def=bak;e.sp=55}}}
+ for(const e of ents){if(e.isBoss&&!e.out){e.bossT-=dt;if(e.bossT<=0){e.bossT=rand(3.6,5.4);const bak=e.def;const pool=ROSTER.filter(r=>!r.locked);e.def=pool[Math.floor(Math.random()*pool.length)];e.specialCd=0;e.sp=100;useSpecial(e);e.def=bak;e.sp=55}}}
  // zone
- if(mode==="royale"&&running){zoneT+=dt;if(zoneT>7){zoneT=0;zone.r=Math.max(180,zone.r-115)}if(player&&!player.dead&&Math.hypot(player.x-zone.x,player.y-zone.y)>zone.r){if(Math.random()<dt*4)damage(null,player,14,"☠️ ZONE!")}}
+ if(mode==="royale"&&running){zoneT+=dt;if(zoneT>7){zoneT=0;zone.r=Math.max(180,zone.r-115)}if(player&&!player.out&&Math.hypot(player.x-zone.x,player.y-zone.y)>zone.r){if(Math.random()<dt*4)damage(null,player,14,"⚠️ STORM ZONE!")}}
  // clouds (Shin smoke / Ultima red smoke)
- for(const c of clouds){c.life-=dt*1000;c.dmgT-=dt*1000;if(c.dmgT<=0){c.dmgT=380;for(const t of ents){if(!t.dead&&t!==c.src&&(c.src.team==="solo"||t.team!==c.src.team)&&Math.hypot(t.x-c.x,t.y-c.y)<95)damage(c.src,t,c.kind==="ultima"?64:22)}}}
+ for(const c of clouds){c.life-=dt*1000;c.dmgT-=dt*1000;if(c.dmgT<=0){c.dmgT=380;for(const t of ents){if(!t.out&&t!==c.src&&(c.src.team==="solo"||t.team!==c.src.team)&&Math.hypot(t.x-c.x,t.y-c.y)<95)damage(c.src,t,c.kind==="ultima"?64:22)}}}
  clouds=clouds.filter(c=>c.life>0);
  // projectiles
  for(const p of projs){p.x+=p.vx*dt;p.y+=p.vy*dt;p.life-=dt*1000;
    if(Math.random()<.65)parts.push({x:p.x,y:p.y,vx:rand(-16,16),vy:rand(-16,16),life:230,color:p.color,size:p.big?5:3});
    for(const o of obs){if(o.hp>0&&p.x>o.x&&p.x<o.x+o.w&&p.y>o.y&&p.y<o.y+o.h){damageObs(o,p.dmg,p.src);explode(p.x,p.y,"#f59e0b",7);p.life=0;break}}
    if(p.life<=0)continue;
-   for(const t of ents){if(!t.dead&&t!==p.src&&(p.src.team==="solo"||t.team!==p.src.team)&&Math.hypot(t.x-p.x,t.y-(p.y))<t.r+p.r){damage(p.src,t,p.dmg);p.life=0;explode(p.x,p.y,p.color,8);break}}}
+   for(const t of ents){if(!t.out&&t!==p.src&&(p.src.team==="solo"||t.team!==p.src.team)&&Math.hypot(t.x-p.x,t.y-(p.y))<t.r+p.r){damage(p.src,t,p.dmg);p.life=0;explode(p.x,p.y,p.color,8);break}}}
  projs=projs.filter(p=>p.life>0&&p.x>0&&p.x<WORLD.w&&p.y>0&&p.y<WORLD.h);
  for(const p of parts){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=.96;p.vy*=.96;p.life-=dt*1000}
  parts=parts.filter(p=>p.life>0);
@@ -447,7 +448,7 @@ function step(dt){
  texts=texts.filter(t=>t.life>0);
  for(const b of beams)b.life-=dt*1000;beams=beams.filter(b=>b.life>0);
  // practice respawn
- if(mode==="practice"){for(const e of ents)if(e.dead){e.dead=false;e.hp=e.maxhp;const s=spawnPos();e.x=s.x;e.y=s.y}}
+ if(mode==="practice"){for(const e of ents)if(e.out){e.out=false;e.hp=e.maxhp;const s=spawnPos();e.x=s.x;e.y=s.y}}
  if(player){cam.x=Math.max(0,Math.min(WORLD.w-W,player.x-W/2));cam.y=Math.max(0,Math.min(WORLD.h-H,player.y-H/2));if(WORLD.w<W)cam.x=(WORLD.w-W)/2;if(WORLD.h<H)cam.y=(WORLD.h-H)/2}
  updateHud();checkWin();
 }
@@ -509,7 +510,7 @@ function draw(){
  // projectiles
  for(const p of projs){ctx.beginPath();ctx.arc(p.x-cam.x,p.y-cam.y,p.r,0,Math.PI*2);ctx.fillStyle=p.color;ctx.shadowColor=p.color;ctx.shadowBlur=16;ctx.fill();ctx.shadowBlur=0}
  // entities sorted by y
- [...ents].filter(e=>!e.dead).sort((a,b)=>a.y-b.y).forEach(drawKaiju);
+ [...ents].filter(e=>!e.out).sort((a,b)=>a.y-b.y).forEach(drawKaiju);
  for(const p of parts){ctx.globalAlpha=Math.max(0,p.life/600);ctx.beginPath();ctx.arc(p.x-cam.x,p.y-cam.y,p.size,0,Math.PI*2);ctx.fillStyle=p.color;ctx.fill();ctx.globalAlpha=1}
  ctx.textAlign="center";for(const t of texts){ctx.globalAlpha=Math.max(0,t.life/800);ctx.font="bold "+t.size+"px Arial";ctx.fillStyle=t.color;ctx.shadowColor="#000";ctx.shadowBlur=5;ctx.fillText(t.t,t.x-cam.x,t.y-cam.y);ctx.shadowBlur=0;ctx.globalAlpha=1}
  // lightning over Tokyo
