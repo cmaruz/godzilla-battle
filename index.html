@@ -190,13 +190,13 @@ const ROSTER=[
  {id:"ultima",name:"Godzilla Ultima",emoji:"🔴✨",color:"#450a0a",accent:"#f43f5e",glow:"#fb7185",special:"Red Smoke 321 → Blue Circles 1000",desc:"Red smoke does 321 damage, then a beam firing blue circles does 1000 damage!"},
  {id:"eva",name:"Shin Eva Godzilla",emoji:"🟢🟣",color:"#14532d",accent:"#a78bfa",glow:"#4ade80",special:"Teleport",desc:"Teleports right in front of the enemy — SURPRISE!"},
  {id:"exe",name:"Godzilla Exe",emoji:"⚫🔴",color:"#111827",accent:"#dc2626",glow:"#991b1b",special:"Huge Beam From Hand",desc:"A HUGE beam fired from its hand."},
- {id:"zilla",name:"Zilla",emoji:"🦎",color:"#365314",accent:"#84cc16",glow:"#a3e635",special:"Beam",desc:"Beam special. Attack points: 500. Unlockable #1.",atk:500,unlockAt:10},
- {id:"fiomserias",name:"Fiomserias",emoji:"🌿🦖",color:"#14532d",accent:"#22c55e",glow:"#4ade80",special:"Green Beam",desc:"Green Beam special. Attack points: 700. Unlockable #2.",atk:700,unlockAt:20},
- {id:"zillajr",name:"Zilla Jr.",emoji:"🩵🦖",color:"#0c4a6e",accent:"#38bdf8",glow:"#7dd3fc",special:"Blue Beam",desc:"Blue Beam special. Attack points: 900. Unlockable #3.",atk:900,unlockAt:30},
- {id:"earth",name:"Godzilla Earth",emoji:"🌍🦖",color:"#422006",accent:"#d97706",glow:"#f59e0b",special:"Boulder",desc:"Boulder special: throws a giant rock! Attack points: 1,200. Unlockable #4.",atk:1200,unlockAt:40},
- {id:"exgod",name:"EX Godzilla",emoji:"⚡🦖",color:"#27272a",accent:"#eab308",glow:"#fde047",special:"Beam",desc:"Beam special. Attack points: 1,350. Unlockable #5.",atk:1350,unlockAt:50},
- {id:"space",name:"SpaceGodzilla",emoji:"🪐🦖",color:"#312e81",accent:"#818cf8",glow:"#c084fc",special:"Attacks",desc:"Attacks special: a burst of attacks all at once! Attack points: 1,500. Unlockable #6.",atk:1500,unlockAt:60},
- {id:"kaishiin",name:"Kai Shiin",emoji:"⚪🦖",color:"#3f3f46",accent:"#f8fafc",glow:"#ffffff",special:"White Beam",desc:"White Beam special. Attack points: 1,700. Unlockable #7 — the strongest unlockable!",atk:1700,unlockAt:70}
+ {id:"zilla",name:"Zilla",emoji:"🦎",color:"#365314",accent:"#84cc16",glow:"#a3e635",special:"Beam",desc:"Beam special. Attack points: 500. Unlockable #1.",atk:500,unlockAt:10,hp:1000},
+ {id:"fiomserias",name:"Fiomserias",emoji:"🌿🦖",color:"#14532d",accent:"#22c55e",glow:"#4ade80",special:"Green Beam",desc:"Green Beam special. Attack points: 700. Unlockable #2.",atk:700,unlockAt:20,hp:1500},
+ {id:"zillajr",name:"Zilla Jr.",emoji:"🩵🦖",color:"#0c4a6e",accent:"#38bdf8",glow:"#7dd3fc",special:"Blue Beam",desc:"Blue Beam special. Attack points: 900. Unlockable #3.",atk:900,unlockAt:30,hp:2000},
+ {id:"earth",name:"Godzilla Earth",emoji:"🌍🦖",color:"#422006",accent:"#d97706",glow:"#f59e0b",special:"Boulder",desc:"Boulder special: throws a giant rock! Attack points: 1,200. Unlockable #4.",atk:1200,unlockAt:40,hp:2500},
+ {id:"exgod",name:"EX Godzilla",emoji:"⚡🦖",color:"#27272a",accent:"#eab308",glow:"#fde047",special:"Beam",desc:"Beam special. Attack points: 1,350. Unlockable #5.",atk:1350,unlockAt:50,hp:3000},
+ {id:"space",name:"SpaceGodzilla",emoji:"🪐🦖",color:"#312e81",accent:"#818cf8",glow:"#c084fc",special:"Attacks",desc:"Attacks special: a burst of attacks all at once! Attack points: 1,500. Unlockable #6.",atk:1500,unlockAt:60,hp:3500},
+ {id:"kaishiin",name:"Kai Shiin",emoji:"⚪🦖",color:"#3f3f46",accent:"#f8fafc",glow:"#ffffff",special:"White Beam",desc:"White Beam special. Attack points: 1,700. Unlockable #7 — the strongest unlockable!",atk:1700,unlockAt:70,hp:4000}
 ];
 let save={totalElims:0,wins:0,battles:0};
 try{const s=localStorage.getItem("godzillaBattleSaveV1");if(s)save=JSON.parse(s);if(typeof save.totalElims!=="number"){save.totalElims=0;for(const k in save){if(k.indexOf("total")===0&&k!=="totalElims"&&typeof save[k]==="number"){save.totalElims=save[k];delete save[k]}}}}catch(e){}
@@ -210,14 +210,14 @@ function renderChars(){
   const un=unlocked(r);
   return `<div class="card ${selected===r.id?"sel":""} ${un?"":"locked"}" data-char="${r.id}">
    <div class="kaijuIcon">${un?r.emoji:"🔒"}</div><h3>${un?r.name:"??? Locked ???"}</h3>
-   <p>${un?("<b>Special:</b> "+r.special+(r.atk?("<br><b>Attack:</b> "+r.atk):"")):("Unlocks at "+r.unlockAt+" total eliminations!")}</p>
+   <p>${un?("<b>Special:</b> "+r.special+(r.atk?("<br><b>Attack:</b> "+r.atk+"<br><b>HP:</b> "+(r.hp||1000)):"")):("Unlocks at "+r.unlockAt+" total eliminations!")}</p>
    <div class="rarity">${un?(r.unlockAt?"🔓 UNLOCKED":"FREE ⭐ Rarity: Mattia to decide"):"🔒 LOCKED"}</div></div>`}).join("");
  document.querySelectorAll("[data-char]").forEach(el=>el.onclick=()=>{const r=ROSTER.find(x=>x.id===el.dataset.char);if(!unlocked(r)){toast("🔒 Locked! Get "+r.unlockAt+" total eliminations to unlock this Godzilla.");return}selected=r.id;renderChars()});
  $("metaLine").textContent=(()=>{const nx=nextUnlock();return `⭐ Total eliminations: ${save.totalElims}  •  🏆 Wins: ${save.wins}  •  ⚔️ Battles: ${save.battles}  •  `+(nx?(`Next unlock at ${nx.unlockAt} total eliminations (${nx.unlockAt-save.totalElims} to go)`):"ALL GODZILLAS UNLOCKED! 🌟")})();
 }
 function renderGram(){
  $("gramMeta").textContent=`Total eliminations: ${save.totalElims} • Wins: ${save.wins} • Every 10 eliminations = a new kind of Godzilla!`;
- $("gramGrid").innerHTML=ROSTER.map(r=>{const un=unlocked(r);return `<div class="card gramCard ${un?"":"locked"}"><div class="kaijuIcon">${un?r.emoji:"🔒"}</div><h3 style="text-align:center">${un?r.name:"??? Mystery Godzilla ???"}</h3><p>${un?r.desc:("Keep playing! "+r.unlockAt+" total eliminations unlocks this Godzilla.")}</p><div class="rarity">${r.atk?("⚔️ Attack points: "+r.atk):"Rarity: Common → Rare → Epic → Legend → APEX (Mattia to decide this one)"}</div></div>`}).join("");
+ $("gramGrid").innerHTML=ROSTER.map(r=>{const un=unlocked(r);return `<div class="card gramCard ${un?"":"locked"}"><div class="kaijuIcon">${un?r.emoji:"🔒"}</div><h3 style="text-align:center">${un?r.name:"??? Mystery Godzilla ???"}</h3><p>${un?r.desc:("Keep playing! "+r.unlockAt+" total eliminations unlocks this Godzilla.")}</p><div class="rarity">${r.atk?("⚔️ Attack points: "+r.atk+" • ❤️ HP: "+(r.hp||1000)):"Rarity: Common → Rare → Epic → Legend → APEX (Mattia to decide this one)"}</div></div>`}).join("");
 }
 renderChars();
 
@@ -268,7 +268,7 @@ function setDir(e,dx,dy){const m=Math.hypot(dx,dy);if(m>0.01){e.dirX=dx/m;e.dirY
 function autoAim(e,range){let best=null,bd=range||640;for(const t of ents){if(t.out||t===e)continue;if(e.team!=="solo"&&t.team===e.team)continue;const d=dist(e,t);if(d<bd){bd=d;best=t}}if(best)setDir(e,best.x-e.x,best.y-e.y);return best}
 function beamHit(e,t,range,width){const dx=t.x-e.x,dy=t.y-e.y;const along=dx*e.dirX+dy*e.dirY;const perp=Math.abs(dx*(-e.dirY)+dy*e.dirX);return along>0&&along<range&&perp<width}
 function makeEnt(x,y,def,isPlayer,team){
- return {x,y,vx:0,vy:0,r:26,hp:1000,maxhp:1000,def,isPlayer:!!isPlayer,team:team||"solo",face:1,dirX:1,dirY:0,atkCd:0,sp: isPlayer?35:0,specialCd:0,buffUntil:0,buffMult:1,level:1,xp:0,elims:0,aiT:rand(0,.4),wander:rand(0,Math.PI*2),out:false,name:isPlayer?def.name:def.name.replace("Godzilla ","G. "),stun:0,combo:0,comboT:0,bossT:rand(2,4)}
+ return {x,y,vx:0,vy:0,r:26,hp:(def.hp||1000),maxhp:(def.hp||1000),def,isPlayer:!!isPlayer,team:team||"solo",face:1,dirX:1,dirY:0,atkCd:0,sp: isPlayer?35:0,specialCd:0,buffUntil:0,buffMult:1,level:1,xp:0,elims:0,aiT:rand(0,.4),wander:rand(0,Math.PI*2),out:false,name:isPlayer?def.name:def.name.replace("Godzilla ","G. "),stun:0,combo:0,comboT:0,bossT:rand(2,4)}
 }
 function obstacles(){
  let list;
