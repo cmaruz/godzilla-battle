@@ -189,12 +189,19 @@ const ROSTER=[
  {id:"ultima",name:"Godzilla Ultima",emoji:"🔴✨",color:"#450a0a",accent:"#f43f5e",glow:"#fb7185",special:"Red Smoke 321 → Blue Circles 1000",desc:"Red smoke does 321 damage, then a beam firing blue circles does 1000 damage!"},
  {id:"eva",name:"Shin Eva Godzilla",emoji:"🟢🟣",color:"#14532d",accent:"#a78bfa",glow:"#4ade80",special:"Teleport",desc:"Teleports right in front of the enemy — SURPRISE!"},
  {id:"exe",name:"Godzilla Exe",emoji:"⚫🔴",color:"#111827",accent:"#dc2626",glow:"#991b1b",special:"Huge Beam From Hand",desc:"A HUGE beam fired from its hand."},
- {id:"gold",name:"Golden Godzilla ???",emoji:"🌟🦖",color:"#713f12",accent:"#facc15",glow:"#fde047",special:"Golden Roar",desc:"MYSTERY Godzilla! Unlock it with 10 total eliminations.",locked:true}
+ {id:"zilla",name:"Zilla",emoji:"🦎",color:"#365314",accent:"#84cc16",glow:"#a3e635",special:"Beam",desc:"Beam special. Attack points: 500. Unlockable #1.",atk:500,unlockAt:10},
+ {id:"fiomserias",name:"Fiomserias",emoji:"🌿🦖",color:"#14532d",accent:"#22c55e",glow:"#4ade80",special:"Green Beam",desc:"Green Beam special. Attack points: 700. Unlockable #2.",atk:700,unlockAt:20},
+ {id:"zillajr",name:"Zilla Jr.",emoji:"🩵🦖",color:"#0c4a6e",accent:"#38bdf8",glow:"#7dd3fc",special:"Blue Beam",desc:"Blue Beam special. Attack points: 900. Unlockable #3.",atk:900,unlockAt:30},
+ {id:"earth",name:"Godzilla Earth",emoji:"🌍🦖",color:"#422006",accent:"#d97706",glow:"#f59e0b",special:"Boulder",desc:"Boulder special: throws a giant rock! Attack points: 1,200. Unlockable #4.",atk:1200,unlockAt:40},
+ {id:"exgod",name:"EX Godzilla",emoji:"⚡🦖",color:"#27272a",accent:"#eab308",glow:"#fde047",special:"Beam",desc:"Beam special. Attack points: 1,350. Unlockable #5.",atk:1350,unlockAt:50},
+ {id:"space",name:"SpaceGodzilla",emoji:"🪐🦖",color:"#312e81",accent:"#818cf8",glow:"#c084fc",special:"Attacks",desc:"Attacks special: a burst of attacks all at once! Attack points: 1,500. Unlockable #6.",atk:1500,unlockAt:60},
+ {id:"kaishiin",name:"Kai Shiin",emoji:"⚪🦖",color:"#3f3f46",accent:"#f8fafc",glow:"#ffffff",special:"White Beam",desc:"White Beam special. Attack points: 1,700. Unlockable #7 — the strongest unlockable!",atk:1700,unlockAt:70}
 ];
 let save={totalElims:0,wins:0,battles:0};
 try{const s=localStorage.getItem("godzillaBattleSaveV1");if(s)save=JSON.parse(s);if(typeof save.totalElims!=="number"){save.totalElims=0;for(const k in save){if(k.indexOf("total")===0&&k!=="totalElims"&&typeof save[k]==="number"){save.totalElims=save[k];delete save[k]}}}}catch(e){}
 function persist(){try{localStorage.setItem("godzillaBattleSaveV1",JSON.stringify(save))}catch(e){}}
-function unlocked(r){return !r.locked||save.totalElims>=10}
+function unlocked(r){return !r.unlockAt||save.totalElims>=r.unlockAt}
+function nextUnlock(){const n=ROSTER.filter(r=>r.unlockAt&&save.totalElims<r.unlockAt).sort((a,b)=>a.unlockAt-b.unlockAt)[0];return n||null}
 
 let selected="thermo",mode="royale",mapName="tokyo",botNum=6;
 function renderChars(){
@@ -202,14 +209,14 @@ function renderChars(){
   const un=unlocked(r);
   return `<div class="card ${selected===r.id?"sel":""} ${un?"":"locked"}" data-char="${r.id}">
    <div class="kaijuIcon">${un?r.emoji:"🔒"}</div><h3>${un?r.name:"??? Locked ???"}</h3>
-   <p>${un?("<b>Special:</b> "+r.special):"Get 10 total eliminations to unlock!"}</p>
-   <div class="rarity">${un?"FREE ⭐ Rarity: Mattia to decide":"LOCKED"}</div></div>`}).join("");
- document.querySelectorAll("[data-char]").forEach(el=>el.onclick=()=>{const r=ROSTER.find(x=>x.id===el.dataset.char);if(!unlocked(r)){toast("🔒 Locked! Get 10 total eliminations to unlock this Godzilla.");return}selected=r.id;renderChars()});
- $("metaLine").textContent=`⭐ Total eliminations: ${save.totalElims}  •  🏆 Wins: ${save.wins}  •  ⚔️ Battles: ${save.battles}  •  Next unlock at 10 total eliminations ${save.totalElims>=10?"— UNLOCKED! 🌟":"("+(10-save.totalElims)+" to go)"}`;
+   <p>${un?("<b>Special:</b> "+r.special+(r.atk?("<br><b>Attack:</b> "+r.atk):"")):("Unlocks at "+r.unlockAt+" total eliminations!")}</p>
+   <div class="rarity">${un?(r.unlockAt?"🔓 UNLOCKED":"FREE ⭐ Rarity: Mattia to decide"):"🔒 LOCKED"}</div></div>`}).join("");
+ document.querySelectorAll("[data-char]").forEach(el=>el.onclick=()=>{const r=ROSTER.find(x=>x.id===el.dataset.char);if(!unlocked(r)){toast("🔒 Locked! Get "+r.unlockAt+" total eliminations to unlock this Godzilla.");return}selected=r.id;renderChars()});
+ $("metaLine").textContent=(()=>{const nx=nextUnlock();return `⭐ Total eliminations: ${save.totalElims}  •  🏆 Wins: ${save.wins}  •  ⚔️ Battles: ${save.battles}  •  `+(nx?(`Next unlock at ${nx.unlockAt} total eliminations (${nx.unlockAt-save.totalElims} to go)`):"ALL GODZILLAS UNLOCKED! 🌟")})();
 }
 function renderGram(){
  $("gramMeta").textContent=`Total eliminations: ${save.totalElims} • Wins: ${save.wins} • Every 10 eliminations = a new kind of Godzilla!`;
- $("gramGrid").innerHTML=ROSTER.map(r=>{const un=unlocked(r);return `<div class="card gramCard ${un?"":"locked"}"><div class="kaijuIcon">${un?r.emoji:"🔒"}</div><h3 style="text-align:center">${un?r.name:"??? Mystery Godzilla ???"}</h3><p>${un?r.desc:"Keep playing! 10 total eliminations unlocks this Godzilla."}</p><div class="rarity">Rarity: Common → Rare → Epic → Legend → APEX (Mattia to decide this one)</div></div>`}).join("");
+ $("gramGrid").innerHTML=ROSTER.map(r=>{const un=unlocked(r);return `<div class="card gramCard ${un?"":"locked"}"><div class="kaijuIcon">${un?r.emoji:"🔒"}</div><h3 style="text-align:center">${un?r.name:"??? Mystery Godzilla ???"}</h3><p>${un?r.desc:("Keep playing! "+r.unlockAt+" total eliminations unlocks this Godzilla.")}</p><div class="rarity">${r.atk?("⚔️ Attack points: "+r.atk):"Rarity: Common → Rare → Epic → Legend → APEX (Mattia to decide this one)"}</div></div>`}).join("");
 }
 renderChars();
 
@@ -278,7 +285,7 @@ function startGame(){
  const sz=MAP_SIZES[mapName]||MAP_SIZES.tokyo;WORLD={w:sz.w,h:sz.h};
  const pdef=charById(selected);obs=obstacles();ents=[];projs=[];parts=[];texts=[];beams=[];clouds=[];zone={x:WORLD.w/2,y:WORLD.h/2,r:Math.max(WORLD.w,WORLD.h)*0.62};zoneT=0;teamScore={red:0,blue:0};shake=0;slowT=0;bossSpawned=false;bossRef=null;$("vig").style.opacity=0;
  const ps=spawnPos();player=makeEnt(ps.x,ps.y,pdef,true,mode==="team"||mode==="party"?"red":"solo");ents.push(player);
- const enemyDefs=ROSTER.filter(r=>!r.locked);
+ const enemyDefs=ROSTER.filter(r=>!r.unlockAt);
  function addEnemy(team){const s=spawnPos();const d=enemyDefs[Math.floor(Math.random()*enemyDefs.length)];const e=makeEnt(s.x,s.y,d,false,team||"solo");e.sp=rand(20,70);ents.push(e);return e}
  if(mode==="royale"){for(let i=0;i<34;i++)addEnemy("solo");center("👑 35 FIGHTERS!\nBe the last Godzilla standing!")}
  else if(mode==="bots"){for(let i=0;i<botNum;i++)addEnemy("solo");center("🤖 BOTS MODE\nBeat all "+botNum+" bots!")}
@@ -313,7 +320,7 @@ function damage(src,tgt,amt,label){
  if(tgt.hp<=0&&!tgt.out){tgt.out=true;explode(tgt.x,tgt.y,tgt.def.accent,34);sfx(tgt.isBoss?"bigboom":"boom");shake=Math.max(shake,tgt.isBoss?22:(src===player?11:6));if(src===player){slowT=Math.max(slowT,.30);src.combo=(src.comboT>0?src.combo+1:1);src.comboT=4;if(src.combo>=2)texts.push({x:src.x,y:src.y-80,t:"🔥 COMBO x"+src.combo+"!",life:1100,color:"#fb923c",size:26});if(src.combo>=3)toast("🔥🔥 COMBO x"+src.combo+"!! Mattia is UNSTOPPABLE!")}
    if(src){src.elims++;src.xp++;if(src.xp>=3){src.xp=0;src.level++;src.maxhp+=60;src.hp=Math.min(src.maxhp,src.hp+180);if(src===player){toast("⬆️ LEVEL UP! You are now Level "+src.level+" — stronger and healed!");sfx("level")}}}
    if(tgt.team==="blue")teamScore.red++;if(tgt.team==="red"&&tgt!==player)teamScore.blue++;
-   if(src===player){save.totalElims++;persist();if(save.totalElims===10)toast("🌟 NEW GODZILLA UNLOCKED in the Godzillagram!",4200)}
+   if(src===player){save.totalElims++;persist();const nu=ROSTER.find(r=>r.unlockAt===save.totalElims);if(nu)toast("🌟 NEW GODZILLA UNLOCKED: "+nu.name+"! Find it in the Godzillagram!",4200)}
    if(tgt===player){gameOver(false)}
  }
  updateHud();
@@ -347,8 +354,13 @@ function useSpecial(e){
  } else if(id==="exe"){
    beams.push({x1:e.x+e.dirX*26,y1:e.y+e.dirY*26,x2:e.x+e.dirX*560,y2:e.y+e.dirY*560,life:600,color:"#ef4444",w:34});
    enemies().forEach(t=>{if(beamHit(e,t,570,62))damage(e,t,250)});explode(e.x+e.dirX*80,e.y+e.dirY*80,"#ef4444",30);shake=Math.max(shake,10);if(e===player)toast("⚫ HUGE BEAM FROM HAND!");
- } else { // gold
-   explode(e.x,e.y,"#facc15",60);enemies().forEach(t=>{if(dist(e,t)<230)damage(e,t,180)});obs.forEach(o=>{if(Math.hypot(o.x+o.w/2-e.x,o.y+o.h/2-e.y)<250)damageObs(o,190,e)});shake=Math.max(shake,13);if(e===player)toast("🌟 GOLDEN ROAR!");
+ } else if(["zilla","fiomserias","zillajr","exgod","kaishiin"].includes(id)){
+   const dmg=Math.round(e.def.atk/4);beams.push({x1:e.x+e.dirX*26,y1:e.y+e.dirY*26,x2:e.x+e.dirX*560,y2:e.y+e.dirY*560,life:600,color:e.def.accent,w:26});
+   enemies().forEach(t=>{if(beamHit(e,t,570,58))damage(e,t,dmg)});explode(e.x+e.dirX*80,e.y+e.dirY*80,e.def.accent,30);shake=Math.max(shake,10);if(e===player)toast(e.def.emoji+" "+e.def.special.toUpperCase()+"! "+dmg+" damage!");
+ } else if(id==="earth"){
+   const dmg=Math.round(e.def.atk/4);projs.push({x:e.x+e.dirX*36,y:e.y+e.dirY*36,vx:e.dirX*300,vy:e.dirY*300,src:e,color:"#d97706",dmg,r:26,life:1400,big:true});explode(e.x,e.y,"#d97706",25);shake=Math.max(shake,9);if(e===player)toast("🌍 BOULDER! "+dmg+" damage!");
+ } else if(id==="space"){
+   const dmg=Math.round(e.def.atk/10);for(let i=0;i<5;i++){const base=Math.atan2(e.dirY,e.dirX)+(i-2)*0.22;const spd=380+i*30;projs.push({x:e.x+e.dirX*30,y:e.y+e.dirY*30,vx:Math.cos(base)*spd,vy:Math.sin(base)*spd,src:e,color:"#818cf8",dmg,r:14,life:950,big:true})}explode(e.x,e.y,"#818cf8",35);shake=Math.max(shake,9);if(e===player)toast("🪐 SPACEGODZILLA ATTACKS! "+dmg+" damage x5!");
  }
  updateHud();
 }
@@ -429,7 +441,7 @@ function step(dt){
  // APEX boss: appears in Battle Royale when only 10 are left
  if(mode==="royale"&&!bossSpawned){const aliveN=ents.filter(e=>!e.out).length;if(aliveN<=10&&aliveN>1)spawnApexBoss(true)}
  // boss uses the other Godzillas' specials!
- for(const e of ents){if(e.isBoss&&!e.out){e.bossT-=dt;if(e.bossT<=0){e.bossT=rand(3.6,5.4);const bak=e.def;const pool=ROSTER.filter(r=>!r.locked);e.def=pool[Math.floor(Math.random()*pool.length)];e.specialCd=0;e.sp=100;useSpecial(e);e.def=bak;e.sp=55}}}
+ for(const e of ents){if(e.isBoss&&!e.out){e.bossT-=dt;if(e.bossT<=0){e.bossT=rand(3.6,5.4);const bak=e.def;const pool=ROSTER.filter(r=>!r.unlockAt);e.def=pool[Math.floor(Math.random()*pool.length)];e.specialCd=0;e.sp=100;useSpecial(e);e.def=bak;e.sp=55}}}
  // zone
  if(mode==="royale"&&running){zoneT+=dt;if(zoneT>7){zoneT=0;zone.r=Math.max(180,zone.r-115)}if(player&&!player.out&&Math.hypot(player.x-zone.x,player.y-zone.y)>zone.r){if(Math.random()<dt*4)damage(null,player,14,"⚠️ STORM ZONE!")}}
  // clouds (Shin smoke / Ultima red smoke)
