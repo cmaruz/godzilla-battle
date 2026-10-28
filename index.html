@@ -144,6 +144,7 @@ h1 span{color:#ffd83d}
   <div style="max-width:720px;background:#111c38;border:2px solid #334155;border-radius:18px;padding:18px;line-height:1.65;font-size:16px">
     🕹️ <b>Move:</b> left joystick on iPad, or WASD / arrows on a computer.<br>
     🔥 <b>Attack:</b> red ATOMIC ATTACK button (or J / Space).<br>
+    🎯 <b>Auto-aim:</b> your attacks aim at the nearest enemy automatically — you can run away and still shoot back!<br>
     ⭐ <b>Special:</b> purple button (or K) when the SPECIAL bar is full. Every Godzilla has a different special — Mattia designed them all.<br>
     ❤️ <b>Survive:</b> in Battle Royale the storm circle shrinks — stay inside it!<br>
     🏆 <b>Win:</b> be the last Godzilla standing, or beat the BLUE team in Team Fight.<br>
@@ -264,6 +265,7 @@ const rand=(a,b)=>a+Math.random()*(b-a);
 const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
 function charById(id){return ROSTER.find(r=>r.id===id)}
 function setDir(e,dx,dy){const m=Math.hypot(dx,dy);if(m>0.01){e.dirX=dx/m;e.dirY=dy/m;e.face=e.dirX>=0?1:-1}}
+function autoAim(e,range){let best=null,bd=range||640;for(const t of ents){if(t.out||t===e)continue;if(e.team!=="solo"&&t.team===e.team)continue;const d=dist(e,t);if(d<bd){bd=d;best=t}}if(best)setDir(e,best.x-e.x,best.y-e.y);return best}
 function beamHit(e,t,range,width){const dx=t.x-e.x,dy=t.y-e.y;const along=dx*e.dirX+dy*e.dirY;const perp=Math.abs(dx*(-e.dirY)+dy*e.dirX);return along>0&&along<range&&perp<width}
 function makeEnt(x,y,def,isPlayer,team){
  return {x,y,vx:0,vy:0,r:26,hp:1000,maxhp:1000,def,isPlayer:!!isPlayer,team:team||"solo",face:1,dirX:1,dirY:0,atkCd:0,sp: isPlayer?35:0,specialCd:0,buffUntil:0,buffMult:1,level:1,xp:0,elims:0,aiT:rand(0,.4),wander:rand(0,Math.PI*2),out:false,name:isPlayer?def.name:def.name.replace("Godzilla ","G. "),stun:0,combo:0,comboT:0,bossT:rand(2,4)}
@@ -327,7 +329,7 @@ function damage(src,tgt,amt,label){
 }
 function explode(x,y,color,n){for(let i=0;i<n;i++){const a=rand(0,Math.PI*2),s=rand(40,260);parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:rand(300,750),color,size:rand(2,6)})}}
 function attack(e){
- if(e.atkCd>0||e.out)return;e.atkCd=e.isPlayer?260:rand(550,900);
+ if(e.atkCd>0||e.out)return;e.atkCd=e.isPlayer?260:rand(550,900);if(e.isPlayer)autoAim(e,640);
  const speed=520;const hx=e.x+e.dirX*24,hy=e.y+e.dirY*24;projs.push({x:hx,y:hy,vx:e.dirX*speed,vy:e.dirY*speed,src:e,color:e.def.accent,dmg:e.isBoss?42:(e.isPlayer?34:20),r:e.isBoss?16:9,life:650});if(e.isPlayer)sfx("shoot");
  parts.push({x:hx,y:hy,vx:e.dirX*80,vy:e.dirY*80,life:180,color:e.def.glow,size:7});
 }
@@ -335,7 +337,7 @@ function useSpecial(e){
  if(e.out)return;
  if(e.isPlayer&&(e.sp<100))return;
  if(!e.isPlayer&&e.specialCd>0)return;
- e.sp=0;e.specialCd=6000;const now=performance.now();const id=e.def.id;if(e===player)sfx(id==="eva"?"teleport":"special");
+ e.sp=0;e.specialCd=6000;const now=performance.now();const id=e.def.id;if(e.isPlayer)autoAim(e,720);if(e===player)sfx(id==="eva"?"teleport":"special");
  const enemies=()=>ents.filter(t=>!t.out&&t!==e&&(e.team==="solo"||t.team!==e.team));
  if(id==="thermo"||id==="super"){
    const col=id==="thermo"?"#ef4444":"#38bdf8";explode(e.x,e.y,col,70);beams.push({ring:true,x:e.x,y:e.y,r:20,maxr:190,life:350,color:col});
@@ -470,7 +472,7 @@ function drawKaiju(e){
  // team ring
  ctx.beginPath();ctx.ellipse(0,24*S,30*S,10*S,0,0,Math.PI*2);ctx.fillStyle=e.isPlayer?"rgba(255,216,61,.85)":(e.team==="red"?"rgba(239,68,68,.8)":e.team==="blue"?"rgba(59,130,246,.85)":"rgba(0,0,0,.35)");ctx.fill();
  if(e.buffUntil>performance.now()){ctx.beginPath();ctx.arc(0,0,42*S,0,Math.PI*2);ctx.strokeStyle=e.def.accent;ctx.lineWidth=3;ctx.globalAlpha=.65;ctx.stroke();ctx.globalAlpha=1}
- ctx.rotate(Math.atan2(e.dirY||0,e.dirX===undefined?1:e.dirX));ctx.scale(S,S);
+ const _fdx=e.dirX===undefined?1:e.dirX,_flip=_fdx<0,_tilt=Math.max(-1.05,Math.min(1.05,Math.atan2(e.dirY||0,Math.abs(_fdx))));ctx.scale(_flip?-S:S,S);ctx.rotate(_tilt);
  // tail
  ctx.beginPath();ctx.moveTo(-18,12);ctx.lineTo(-52,20);ctx.lineTo(-18,24);ctx.closePath();ctx.fillStyle=e.def.color;ctx.fill();
  // body
