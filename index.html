@@ -124,7 +124,7 @@ h1 span{color:#ffd83d}
     <button class="btn big" id="playBtn">▶ PLAY</button><br><br>
     <button class="btn gold" id="gramBtn">📸 GODZILLAGRAM — My Collection</button>
     <button class="btn grey" id="howBtn">❓ How to Play</button>
-    <p class="note">Move with the joystick (left) or WASD / arrow keys. Tap <b>ATOMIC ATTACK</b> to shoot. Fill the purple bar, then tap <b>SPECIAL</b> for your Godzilla's own special move!<br>Eliminations level you up. Every 10 total eliminations unlocks a NEW kind of Godzilla. VSTAR at level 35 = +50% damage. VMAX at level 50 with 4 Godzillas = +100% damage.</p>
+    <p class="note">Move with the joystick (left) or WASD / arrow keys. Tap <b>ATOMIC ATTACK</b> to shoot. Fill the purple bar, then tap <b>SPECIAL</b> for your Godzilla's own special move!<br>Eliminations level you up. Every 10 total eliminations unlocks a NEW kind of Godzilla, with a special one waiting at 500. VSTAR at level 35 = +50% damage. VMAX at level 50 with 4 Godzillas = +100% damage.</p>
     <p class="note" id="metaLine"></p>
   </div>
 </div>
@@ -191,12 +191,17 @@ const ROSTER=[
  {id:"eva",name:"Shin Eva Godzilla",emoji:"🟢🟣",color:"#14532d",accent:"#a78bfa",glow:"#4ade80",special:"Teleport",desc:"Teleports right in front of the enemy — SURPRISE!"},
  {id:"exe",name:"Godzilla Exe",emoji:"⚫🔴",color:"#111827",accent:"#dc2626",glow:"#991b1b",special:"Huge Beam From Hand",desc:"A HUGE beam fired from its hand."},
  {id:"zilla",name:"Zilla",emoji:"🦎",color:"#365314",accent:"#84cc16",glow:"#a3e635",special:"Beam",desc:"Beam special. Attack points: 500. Unlockable #1.",atk:500,unlockAt:10,hp:1000},
- {id:"fiomserias",name:"Fiomserias",emoji:"🌿🦖",color:"#14532d",accent:"#22c55e",glow:"#4ade80",special:"Green Beam",desc:"Green Beam special. Attack points: 700. Unlockable #2.",atk:700,unlockAt:20,hp:1500},
+ {id:"fiomserias",name:"Zilla from the Series",emoji:"🌿🦖",color:"#14532d",accent:"#22c55e",glow:"#4ade80",special:"Green Beam",desc:"Green Beam special. Attack points: 700. Unlockable #2.",atk:700,unlockAt:20,hp:1500},
  {id:"zillajr",name:"Zilla Jr.",emoji:"🩵🦖",color:"#0c4a6e",accent:"#38bdf8",glow:"#7dd3fc",special:"Blue Beam",desc:"Blue Beam special. Attack points: 900. Unlockable #3.",atk:900,unlockAt:30,hp:2000},
  {id:"earth",name:"Godzilla Earth",emoji:"🌍🦖",color:"#422006",accent:"#d97706",glow:"#f59e0b",special:"Boulder",desc:"Boulder special: throws a giant rock! Attack points: 1,200. Unlockable #4.",atk:1200,unlockAt:40,hp:2500},
  {id:"exgod",name:"EX Godzilla",emoji:"⚡🦖",color:"#27272a",accent:"#eab308",glow:"#fde047",special:"Beam",desc:"Beam special. Attack points: 1,350. Unlockable #5.",atk:1350,unlockAt:50,hp:3000},
- {id:"space",name:"SpaceGodzilla",emoji:"🪐🦖",color:"#312e81",accent:"#818cf8",glow:"#c084fc",special:"Attacks",desc:"Attacks special: a burst of attacks all at once! Attack points: 1,500. Unlockable #6.",atk:1500,unlockAt:60,hp:3500},
- {id:"kaishiin",name:"Kai Shiin",emoji:"⚪🦖",color:"#3f3f46",accent:"#f8fafc",glow:"#ffffff",special:"White Beam",desc:"White Beam special. Attack points: 1,700. Unlockable #7 — the strongest unlockable!",atk:1700,unlockAt:70,hp:4000}
+ {id:"space",name:"SpaceGodzilla",emoji:"🪐🦖",color:"#312e81",accent:"#818cf8",glow:"#c084fc",special:"Underground Crystals",desc:"Underground Crystals special: crystals burst up under every opponent! Attack points: 1,500. Unlockable #6.",atk:1500,unlockAt:60,hp:3500},
+ {id:"kaishiin",name:"Kai Shin",emoji:"⚪🦖",color:"#3f3f46",accent:"#f8fafc",glow:"#ffffff",special:"White Beam",desc:"White Beam special. Attack points: 1,700. Unlockable #7.",atk:1700,unlockAt:70,hp:4000},
+ {id:"evolved",name:"Evolved Godzilla",emoji:"🔥🦖",color:"#7c2d12",accent:"#f97316",glow:"#fb923c",special:"Attack Boost +100%",desc:"Attack Boost: +100% attack for 8 seconds while the special is active, then back to normal. Unlockable #8.",unlockAt:80,hp:4500},
+ {id:"scarlet",name:"Scarlet Godzilla Earth",emoji:"🌋🦖",color:"#450a0a",accent:"#f97316",glow:"#ef4444",special:"Lava Boulder",desc:"Lava Boulder special: 1,800 damage! Unlockable #9.",unlockAt:90,hp:5000},
+ {id:"reworked",name:"Reworked Evolved Godzilla",emoji:"🔥✨",color:"#431407",accent:"#fbbf24",glow:"#f97316",special:"Attack Boost +200%",desc:"Attack Boost: +200% attack for 8 seconds while the special is active, then back to normal. Unlockable #10.",unlockAt:100,hp:5500},
+ {id:"spacegod",name:"Space Godzilla",emoji:"🟣🪐",color:"#2e1065",accent:"#a855f7",glow:"#c084fc",special:"Poisonous Crystals",desc:"Poisonous Crystals: traps opponents for 10 seconds, dealing 2,000 damage per second. They cannot escape! Unlockable #11.",unlockAt:110,hp:6000},
+ {id:"hell",name:"Godzilla Hell",emoji:"🦇🦖",color:"#111827",accent:"#a855f7",glow:"#7c3aed",special:"Bat Swarm",desc:"Bat Swarm: summons 35 bats, each dealing 2,000 damage. When an opponent is out, the bats move to the next closest opponent! Unlockable #12.",unlockAt:500,hp:6500}
 ];
 let save={totalElims:0,wins:0,battles:0};
 try{const s=localStorage.getItem("godzillaBattleSaveV1");if(s)save=JSON.parse(s);if(typeof save.totalElims!=="number"){save.totalElims=0;for(const k in save){if(k.indexOf("total")===0&&k!=="totalElims"&&typeof save[k]==="number"){save.totalElims=save[k];delete save[k]}}}}catch(e){}
@@ -210,14 +215,14 @@ function renderChars(){
   const un=unlocked(r);
   return `<div class="card ${selected===r.id?"sel":""} ${un?"":"locked"}" data-char="${r.id}">
    <div class="kaijuIcon">${un?r.emoji:"🔒"}</div><h3>${un?r.name:"??? Locked ???"}</h3>
-   <p>${un?("<b>Special:</b> "+r.special+(r.atk?("<br><b>Attack:</b> "+r.atk+"<br><b>HP:</b> "+(r.hp||1000)):"")):("Unlocks at "+r.unlockAt+" total eliminations!")}</p>
+   <p>${un?("<b>Special:</b> "+r.special+(r.unlockAt?("<br><b>HP:</b> "+(r.hp||1000)+(r.atk?("<br><b>Attack:</b> "+r.atk):"")):"")):("Unlocks at "+r.unlockAt+" total eliminations!")}</p>
    <div class="rarity">${un?(r.unlockAt?"🔓 UNLOCKED":"FREE ⭐ Rarity: Mattia to decide"):"🔒 LOCKED"}</div></div>`}).join("");
  document.querySelectorAll("[data-char]").forEach(el=>el.onclick=()=>{const r=ROSTER.find(x=>x.id===el.dataset.char);if(!unlocked(r)){toast("🔒 Locked! Get "+r.unlockAt+" total eliminations to unlock this Godzilla.");return}selected=r.id;renderChars()});
  $("metaLine").textContent=(()=>{const nx=nextUnlock();return `⭐ Total eliminations: ${save.totalElims}  •  🏆 Wins: ${save.wins}  •  ⚔️ Battles: ${save.battles}  •  `+(nx?(`Next unlock at ${nx.unlockAt} total eliminations (${nx.unlockAt-save.totalElims} to go)`):"ALL GODZILLAS UNLOCKED! 🌟")})();
 }
 function renderGram(){
  $("gramMeta").textContent=`Total eliminations: ${save.totalElims} • Wins: ${save.wins} • Every 10 eliminations = a new kind of Godzilla!`;
- $("gramGrid").innerHTML=ROSTER.map(r=>{const un=unlocked(r);return `<div class="card gramCard ${un?"":"locked"}"><div class="kaijuIcon">${un?r.emoji:"🔒"}</div><h3 style="text-align:center">${un?r.name:"??? Mystery Godzilla ???"}</h3><p>${un?r.desc:("Keep playing! "+r.unlockAt+" total eliminations unlocks this Godzilla.")}</p><div class="rarity">${r.atk?("⚔️ Attack points: "+r.atk+" • ❤️ HP: "+(r.hp||1000)):"Rarity: Common → Rare → Epic → Legend → APEX (Mattia to decide this one)"}</div></div>`}).join("");
+ $("gramGrid").innerHTML=ROSTER.map(r=>{const un=unlocked(r);return `<div class="card gramCard ${un?"":"locked"}"><div class="kaijuIcon">${un?r.emoji:"🔒"}</div><h3 style="text-align:center">${un?r.name:"??? Mystery Godzilla ???"}</h3><p>${un?r.desc:("Keep playing! "+r.unlockAt+" total eliminations unlocks this Godzilla.")}</p><div class="rarity">${r.unlockAt?("❤️ HP: "+(r.hp||1000)+(r.atk?(" • ⚔️ Attack points: "+r.atk):"")):"Rarity: Common → Rare → Epic → Legend → APEX (Mattia to decide this one)"}</div></div>`}).join("");
 }
 renderChars();
 
@@ -268,7 +273,7 @@ function setDir(e,dx,dy){const m=Math.hypot(dx,dy);if(m>0.01){e.dirX=dx/m;e.dirY
 function autoAim(e,range){let best=null,bd=range||640;for(const t of ents){if(t.out||t===e)continue;if(e.team!=="solo"&&t.team===e.team)continue;const d=dist(e,t);if(d<bd){bd=d;best=t}}if(best)setDir(e,best.x-e.x,best.y-e.y);return best}
 function beamHit(e,t,range,width){const dx=t.x-e.x,dy=t.y-e.y;const along=dx*e.dirX+dy*e.dirY;const perp=Math.abs(dx*(-e.dirY)+dy*e.dirX);return along>0&&along<range&&perp<width}
 function makeEnt(x,y,def,isPlayer,team){
- return {x,y,vx:0,vy:0,r:26,hp:(def.hp||1000),maxhp:(def.hp||1000),def,isPlayer:!!isPlayer,team:team||"solo",face:1,dirX:1,dirY:0,atkCd:0,sp: isPlayer?35:0,specialCd:0,buffUntil:0,buffMult:1,level:1,xp:0,elims:0,aiT:rand(0,.4),wander:rand(0,Math.PI*2),out:false,name:isPlayer?def.name:def.name.replace("Godzilla ","G. "),stun:0,combo:0,comboT:0,bossT:rand(2,4)}
+ return {x,y,vx:0,vy:0,r:26,hp:(def.hp||1000),maxhp:(def.hp||1000),def,isPlayer:!!isPlayer,team:team||"solo",face:1,dirX:1,dirY:0,atkCd:0,sp: isPlayer?35:0,specialCd:0,buffUntil:0,buffMult:1,level:1,xp:0,elims:0,aiT:rand(0,.4),wander:rand(0,Math.PI*2),out:false,name:isPlayer?def.name:def.name.replace("Godzilla ","G. "),stun:0,trappedUntil:0,trapSrc:null,trapDmgT:0,combo:0,comboT:0,bossT:rand(2,4)}
 }
 function obstacles(){
  let list;
@@ -362,7 +367,15 @@ function useSpecial(e){
  } else if(id==="earth"){
    const dmg=Math.round(e.def.atk/4);projs.push({x:e.x+e.dirX*36,y:e.y+e.dirY*36,vx:e.dirX*300,vy:e.dirY*300,src:e,color:"#d97706",dmg,r:26,life:1400,big:true});explode(e.x,e.y,"#d97706",25);shake=Math.max(shake,9);if(e===player)toast("🌍 BOULDER! "+dmg+" damage!");
  } else if(id==="space"){
-   const dmg=Math.round(e.def.atk/10);for(let i=0;i<5;i++){const base=Math.atan2(e.dirY,e.dirX)+(i-2)*0.22;const spd=380+i*30;projs.push({x:e.x+e.dirX*30,y:e.y+e.dirY*30,vx:Math.cos(base)*spd,vy:Math.sin(base)*spd,src:e,color:"#818cf8",dmg,r:14,life:950,big:true})}explode(e.x,e.y,"#818cf8",35);shake=Math.max(shake,9);if(e===player)toast("🪐 SPACEGODZILLA ATTACKS! "+dmg+" damage x5!");
+   const dmg=Math.round(e.def.atk/4);enemies().forEach(t2=>{explode(t2.x,t2.y,"#818cf8",22);damage(e,t2,dmg)});explode(e.x,e.y,"#818cf8",35);shake=Math.max(shake,9);if(e===player)toast("🪐 UNDERGROUND CRYSTALS! Every opponent hit for "+dmg+" damage!");
+ } else if(id==="evolved"||id==="reworked"){
+   const mult=id==="evolved"?2:3,pct=id==="evolved"?100:200;e.buffUntil=now+8000;e.buffMult=mult;explode(e.x,e.y,e.def.accent,40);if(e===player)toast(e.def.emoji+" ATTACK BOOST! +"+pct+"% attack for 8 seconds, then back to normal!");
+ } else if(id==="scarlet"){
+   projs.push({x:e.x+e.dirX*36,y:e.y+e.dirY*36,vx:e.dirX*300,vy:e.dirY*300,src:e,color:"#f97316",dmg:1800,r:30,life:1400,big:true});explode(e.x,e.y,"#f97316",25);if(e===player)toast("🌋 LAVA BOULDER! 1,800 damage!");
+ } else if(id==="spacegod"){
+   enemies().forEach(t2=>{t2.trappedUntil=now+10000;t2.trapSrc=e;t2.trapDmgT=0;explode(t2.x,t2.y,"#a855f7",25)});explode(e.x,e.y,"#a855f7",40);if(e===player)toast("💜 POISONOUS CRYSTALS! Opponents trapped for 10 seconds!");
+ } else if(id==="hell"){
+   for(let i=0;i<35;i++){const a=rand(0,Math.PI*2);projs.push({x:e.x+Math.cos(a)*30,y:e.y+Math.sin(a)*30,vx:Math.cos(a)*380,vy:Math.sin(a)*380,src:e,color:"#a855f7",dmg:2000,r:10,life:8000,bat:true,batCd:0})}explode(e.x,e.y,"#a855f7",50);if(e===player)toast("🦇 BAT SWARM! 35 bats!");
  }
  updateHud();
 }
@@ -393,7 +406,7 @@ function updateHud(){
  const alive=ents.filter(e=>!e.out).length;
  $("hudAlive").textContent=mode==="practice"?"🎯 PRACTICE":alive+" ALIVE";
  $("hudElims").textContent="Eliminations: "+player.elims+"  •  XP Lv "+player.level;
- $("hudLevel").textContent=(player.buffUntil>performance.now()?"⚡ +50% DAMAGE! ":"")+(mode==="royale"?"Zone shrinking…":"");
+ $("hudLevel").textContent=(player.buffUntil>performance.now()?("⚡ +"+Math.round((player.buffMult-1)*100)+"% DAMAGE! "):"")+(mode==="royale"?"Zone shrinking…":"");
  $("hudMode").textContent={royale:"👑 BATTLE ROYALE",bots:"🤖 BOTS MODE",team:"🔴 RED vs BLUE 🔵",party:"🎉 PARTY MODE",practice:"🎯 PRACTICE",boss:"👹 APEX BOSS FIGHT"}[mode];
  $("hudTotal").textContent="Total eliminations: "+save.totalElims;
  $("hudTeam").textContent=mode==="boss"&&bossRef?("👹 APEX BOSS HP: "+Math.max(0,Math.ceil(bossRef.hp))+" / 4200"):((mode==="team"||mode==="party")?("RED "+teamScore.red+" — BLUE "+teamScore.blue):"");
@@ -419,6 +432,8 @@ function step(dt){
  if(keys["a"]||keys["arrowleft"])mx-=1;if(keys["d"]||keys["arrowright"])mx+=1;if(keys["w"]||keys["arrowup"])my-=1;if(keys["s"]||keys["arrowdown"])my+=1;
  const mm=Math.hypot(mx,my);if(mm>1){mx/=mm;my/=mm}
  if(player&&!player.out){player.vx=mx*292;player.vy=my*292;if(Math.hypot(mx,my)>.15)setDir(player,mx,my);if(atkHeld)attack(player)}
+ // Poisonous Crystals: trapped fighters cannot move and take poison damage
+ for(const e of ents){if(!e.out&&e.trappedUntil&&e.trappedUntil>performance.now()){e.trapDmgT=(e.trapDmgT||0)-dt*1000;if(e.trapDmgT<=0){e.trapDmgT=1000;damage(e.trapSrc||null,e,2000,"💜 POISON!")}}}
  // AI + physics
  for(const e of ents){
    if(e.out)continue;
@@ -435,6 +450,7 @@ function step(dt){
      }
      e.sp=Math.min(100,e.sp+dt*4.5);
    } else e.sp=Math.min(100,e.sp+dt*2.2);
+   if(e.trappedUntil&&e.trappedUntil>performance.now()){e.vx=0;e.vy=0}
    e.x=Math.max(30,Math.min(WORLD.w-30,e.x+e.vx*dt));e.y=Math.max(35,Math.min(WORLD.h-25,e.y+e.vy*dt));
    for(const o of obs){if(o.hp>0&&e.x>o.x-e.r&&e.x<o.x+o.w+e.r&&e.y>o.y-e.r&&e.y<o.y+o.h+e.r){e.x-=e.vx*dt;e.y-=e.vy*dt}}
  }
@@ -450,11 +466,11 @@ function step(dt){
  for(const c of clouds){c.life-=dt*1000;c.dmgT-=dt*1000;if(c.dmgT<=0){c.dmgT=380;for(const t of ents){if(!t.out&&t!==c.src&&(c.src.team==="solo"||t.team!==c.src.team)&&Math.hypot(t.x-c.x,t.y-c.y)<95)damage(c.src,t,c.kind==="ultima"?64:22)}}}
  clouds=clouds.filter(c=>c.life>0);
  // projectiles
- for(const p of projs){p.x+=p.vx*dt;p.y+=p.vy*dt;p.life-=dt*1000;
+ for(const p of projs){if(p.batCd>0)p.batCd-=dt*1000;if(p.bat){const ts=ents.filter(t=>!t.out&&t!==p.src&&(p.src.team==="solo"||t.team!==p.src.team));if(ts.length){ts.sort((a,b)=>Math.hypot(a.x-p.x,a.y-p.y)-Math.hypot(b.x-p.x,b.y-p.y));const tt=ts[0],dd=Math.hypot(tt.x-p.x,tt.y-p.y)||1;p.vx=(tt.x-p.x)/dd*420;p.vy=(tt.y-p.y)/dd*420}}p.x+=p.vx*dt;p.y+=p.vy*dt;p.life-=dt*1000;
    if(Math.random()<.65)parts.push({x:p.x,y:p.y,vx:rand(-16,16),vy:rand(-16,16),life:230,color:p.color,size:p.big?5:3});
-   for(const o of obs){if(o.hp>0&&p.x>o.x&&p.x<o.x+o.w&&p.y>o.y&&p.y<o.y+o.h){damageObs(o,p.dmg,p.src);explode(p.x,p.y,"#f59e0b",7);p.life=0;break}}
+   for(const o of obs){if(!p.bat&&o.hp>0&&p.x>o.x&&p.x<o.x+o.w&&p.y>o.y&&p.y<o.y+o.h){damageObs(o,p.dmg,p.src);explode(p.x,p.y,"#f59e0b",7);p.life=0;break}}
    if(p.life<=0)continue;
-   for(const t of ents){if(!t.out&&t!==p.src&&(p.src.team==="solo"||t.team!==p.src.team)&&Math.hypot(t.x-p.x,t.y-(p.y))<t.r+p.r){damage(p.src,t,p.dmg);p.life=0;explode(p.x,p.y,p.color,8);break}}}
+   for(const t of ents){if(!t.out&&t!==p.src&&!(p.bat&&p.batCd>0)&&(p.src.team==="solo"||t.team!==p.src.team)&&Math.hypot(t.x-p.x,t.y-(p.y))<t.r+p.r){damage(p.src,t,p.dmg);if(p.bat){p.batCd=500;p.vx=-p.vx;p.vy=-p.vy}else p.life=0;explode(p.x,p.y,p.color,8);break}}}
  projs=projs.filter(p=>p.life>0&&p.x>0&&p.x<WORLD.w&&p.y>0&&p.y<WORLD.h);
  for(const p of parts){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=.96;p.vy*=.96;p.life-=dt*1000}
  parts=parts.filter(p=>p.life>0);
