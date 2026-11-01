@@ -154,6 +154,7 @@ h1 span{color:#ffd83d}
     🏆 <b>Win:</b> be the last Godzilla standing, or beat the BLUE team in Team Fight.<br>
     📈 <b>Level up:</b> every elimination gives XP. Every 10 total eliminations unlocks a new kind of Godzilla in the Godzillagram.<br>
     💛 <b>Friendly battles:</b> an eliminated Godzilla is just OUT for that battle — nobody gets hurt, and everyone can play again straight away!<br>
+    ⚖️ <b>Opponents:</b> a balanced mix of every Godzilla you have unlocked — the more you unlock, the wider and tougher the mix.<br>
     💥 <b>Spectacular stuff:</b> buildings can be SMASHED, eliminations get a slow-motion replay, combos build up, lightning strikes Tokyo — and in Battle Royale, when only 10 fighters are left, the giant APEX BOSS appears!<br>
     🚫 <b>Mattia's rules:</b> no ads, no purchases, ever. Everything is earned by playing.<br>
     💾 <b>Autosave:</b> your progress saves automatically, so you can close the game and pick up where you left off.<br>
@@ -293,8 +294,11 @@ function charById(id){return ROSTER.find(r=>r.id===id)}
 function setDir(e,dx,dy){const m=Math.hypot(dx,dy);if(m>0.01){e.dirX=dx/m;e.dirY=dy/m;e.face=e.dirX>=0?1:-1}}
 function autoAim(e,range){let best=null,bd=range||640;for(const t of ents){if(t.out||t===e)continue;if(e.team!=="solo"&&t.team===e.team)continue;const d=dist(e,t);if(d<bd){bd=d;best=t}}if(best)setDir(e,best.x-e.x,best.y-e.y);return best}
 function beamHit(e,t,range,width){const dx=t.x-e.x,dy=t.y-e.y;const along=dx*e.dirX+dy*e.dirY;const perp=Math.abs(dx*(-e.dirY)+dy*e.dirX);return along>0&&along<range&&perp<width}
+let oppDeck=[];
+function opponentPool(){const p=ROSTER.filter(r=>unlocked(r));return p.length?p:ROSTER.filter(r=>!r.unlockAt)}
+function nextOpponentDef(){if(!oppDeck.length){oppDeck=[...opponentPool()];for(let i=oppDeck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const tmp=oppDeck[i];oppDeck[i]=oppDeck[j];oppDeck[j]=tmp}}return oppDeck.pop()}
 function makeEnt(x,y,def,isPlayer,team){
- return {x,y,vx:0,vy:0,r:26,hp:(def.hp||1000),maxhp:(def.hp||1000),def,isPlayer:!!isPlayer,team:team||"solo",face:1,dirX:1,dirY:0,atkCd:0,sp: isPlayer?35:0,specialCd:0,buffUntil:0,buffMult:1,level:1,xp:0,elims:0,aiT:rand(0,.4),wander:rand(0,Math.PI*2),out:false,name:isPlayer?def.name:def.name.replace("Godzilla ","G. "),stun:0,trappedUntil:0,trapSrc:null,trapDmgT:0,combo:0,comboT:0,bossT:rand(2,4)}
+ return {x,y,vx:0,vy:0,r:26,hp:(def.hp||1000),maxhp:(def.hp||1000),def,isPlayer:!!isPlayer,team:team||"solo",face:1,dirX:1,dirY:0,atkCd:0,sp: isPlayer?35:0,specialCd:0,buffUntil:0,buffMult:1,level:1,xp:0,elims:0,aiT:rand(0,.4),wander:rand(0,Math.PI*2),out:false,name:isPlayer?def.name:def.name.replace("Godzilla ","G. "),stun:0,trappedUntil:0,trapSrc:null,trapDmgT:0,trapDmg:0,combo:0,comboT:0,bossT:rand(2,4)}
 }
 function obstacles(){
  let list;
@@ -313,12 +317,12 @@ function startGame(){
  const sz=MAP_SIZES[mapName]||MAP_SIZES.tokyo;WORLD={w:sz.w,h:sz.h};
  const pdef=charById(selected);obs=obstacles();ents=[];projs=[];parts=[];texts=[];beams=[];clouds=[];zone={x:WORLD.w/2,y:WORLD.h/2,r:Math.max(WORLD.w,WORLD.h)*0.62};zoneT=0;teamScore={red:0,blue:0};shake=0;slowT=0;bossSpawned=false;bossRef=null;$("vig").style.opacity=0;
  const ps=spawnPos();player=makeEnt(ps.x,ps.y,pdef,true,mode==="team"||mode==="party"?"red":"solo");ents.push(player);
- const enemyDefs=ROSTER.filter(r=>!r.unlockAt);
- function addEnemy(team){const s=spawnPos();const d=enemyDefs[Math.floor(Math.random()*enemyDefs.length)];const e=makeEnt(s.x,s.y,d,false,team||"solo");e.sp=rand(20,70);ents.push(e);return e}
+ oppDeck=[];
+ function addEnemy(team){const s=spawnPos();const d=nextOpponentDef();const e=makeEnt(s.x,s.y,d,false,team||"solo");e.sp=rand(20,70);ents.push(e);return e}
  if(mode==="royale"){for(let i=0;i<34;i++)addEnemy("solo");center("👑 35 FIGHTERS!\nBe the last Godzilla standing!")}
  else if(mode==="bots"){for(let i=0;i<botNum;i++)addEnemy("solo");center("🤖 BOTS MODE\nBeat all "+botNum+" bots!")}
- else if(mode==="team"){for(let i=0;i<5;i++){const s=spawnPos();const a=makeEnt(s.x,s.y,enemyDefs[i%enemyDefs.length],false,"red");a.sp=40;ents.push(a)}for(let i=0;i<6;i++)addEnemy("blue");center("🔴 RED vs BLUE 🔵\nBeat the BLUE team!")}
- else if(mode==="party"){for(let i=0;i<2;i++){const s=spawnPos();const a=makeEnt(s.x,s.y,enemyDefs[(i+2)%enemyDefs.length],false,"red");a.sp=40;ents.push(a)}for(let i=0;i<9;i++)addEnemy("blue");center("🎉 PARTY MODE!\nYou + 2 teammates vs 9!")}
+ else if(mode==="team"){for(let i=0;i<5;i++){const s=spawnPos();const a=makeEnt(s.x,s.y,nextOpponentDef(),false,"red");a.sp=40;ents.push(a)}for(let i=0;i<6;i++)addEnemy("blue");center("🔴 RED vs BLUE 🔵\nBeat the BLUE team!")}
+ else if(mode==="party"){for(let i=0;i<2;i++){const s=spawnPos();const a=makeEnt(s.x,s.y,nextOpponentDef(),false,"red");a.sp=40;ents.push(a)}for(let i=0;i<9;i++)addEnemy("blue");center("🎉 PARTY MODE!\nYou + 2 teammates vs 9!")}
  else if(mode==="boss"){spawnApexBoss(false);center("👹 APEX BOSS FIGHT!\nBeat the GIANT APEX GODZILLA!")}
  else {for(let i=0;i<3;i++)addEnemy("solo");center("🎯 PRACTICE\nTargets come back — try every Special!")}
  show(null);running=true;last=performance.now();updateHud();
@@ -392,11 +396,11 @@ function useSpecial(e){
  } else if(id==="evolved"||id==="reworked"){
    const mult=id==="evolved"?2:3,pct=id==="evolved"?100:200;e.buffUntil=now+8000;e.buffMult=mult;explode(e.x,e.y,e.def.accent,40);if(e===player)toast(e.def.emoji+" ATTACK BOOST! +"+pct+"% attack for 8 seconds, then back to normal!");
  } else if(id==="scarlet"){
-   projs.push({x:e.x+e.dirX*36,y:e.y+e.dirY*36,vx:e.dirX*300,vy:e.dirY*300,src:e,color:"#f97316",dmg:1800,r:30,life:1400,big:true});explode(e.x,e.y,"#f97316",25);if(e===player)toast("🌋 LAVA BOULDER! 1,800 damage!");
+   projs.push({x:e.x+e.dirX*36,y:e.y+e.dirY*36,vx:e.dirX*300,vy:e.dirY*300,src:e,color:"#f97316",dmg:(e.isPlayer?1800:450),r:30,life:1400,big:true});explode(e.x,e.y,"#f97316",25);if(e===player)toast("🌋 LAVA BOULDER! 1,800 damage!");
  } else if(id==="spacegod"){
-   enemies().forEach(t2=>{t2.trappedUntil=now+10000;t2.trapSrc=e;t2.trapDmgT=0;explode(t2.x,t2.y,"#a855f7",25)});explode(e.x,e.y,"#a855f7",40);if(e===player)toast("💜 POISONOUS CRYSTALS! Opponents trapped for 10 seconds!");
+   enemies().forEach(t2=>{t2.trappedUntil=now+(e.isPlayer?10000:3000);t2.trapSrc=e;t2.trapDmgT=0;t2.trapDmg=e.isPlayer?2000:250;explode(t2.x,t2.y,"#a855f7",25)});explode(e.x,e.y,"#a855f7",40);if(e===player)toast("💜 POISONOUS CRYSTALS! Opponents trapped for 10 seconds!");
  } else if(id==="hell"){
-   for(let i=0;i<35;i++){const a=rand(0,Math.PI*2);projs.push({x:e.x+Math.cos(a)*30,y:e.y+Math.sin(a)*30,vx:Math.cos(a)*380,vy:Math.sin(a)*380,src:e,color:"#a855f7",dmg:2000,r:10,life:8000,bat:true,batCd:0})}explode(e.x,e.y,"#a855f7",50);if(e===player)toast("🦇 BAT SWARM! 35 bats!");
+   for(let i=0;i<35;i++){const a=rand(0,Math.PI*2);projs.push({x:e.x+Math.cos(a)*30,y:e.y+Math.sin(a)*30,vx:Math.cos(a)*380,vy:Math.sin(a)*380,src:e,color:"#a855f7",dmg:(e.isPlayer?2000:150),r:10,life:8000,bat:true,batCd:0})}explode(e.x,e.y,"#a855f7",50);if(e===player)toast("🦇 BAT SWARM! 35 bats!");
  }
  updateHud();
 }
@@ -454,7 +458,7 @@ function step(dt){
  const mm=Math.hypot(mx,my);if(mm>1){mx/=mm;my/=mm}
  if(player&&!player.out){player.vx=mx*292;player.vy=my*292;if(Math.hypot(mx,my)>.15)setDir(player,mx,my);if(atkHeld)attack(player)}
  // Poisonous Crystals: trapped fighters cannot move and take poison damage
- for(const e of ents){if(!e.out&&e.trappedUntil&&e.trappedUntil>performance.now()){e.trapDmgT=(e.trapDmgT||0)-dt*1000;if(e.trapDmgT<=0){e.trapDmgT=1000;damage(e.trapSrc||null,e,2000,"💜 POISON!")}}}
+ for(const e of ents){if(!e.out&&e.trappedUntil&&e.trappedUntil>performance.now()){e.trapDmgT=(e.trapDmgT||0)-dt*1000;if(e.trapDmgT<=0){e.trapDmgT=1000;damage(e.trapSrc||null,e,e.trapDmg||2000,"💜 POISON!")}}}
  // AI + physics
  for(const e of ents){
    if(e.out)continue;
