@@ -101,6 +101,7 @@ h1 span{color:#ffd83d}
   <div class="badge gold" style="font-size:16px;margin-top:8px">✨ SPECTACULAR EDITION ✨</div>
   <div class="sub">35 fighters enter. 1 Godzilla remains.</div>
   <div class="by">Designed by Mattia 🎮</div>
+  <div class="by" id="buildLine" style="color:#94a3b8">Build 10</div>
   <div class="badges"><div class="badge green">🚫 NO ADS — EVER</div><div class="badge green">💸 NO PURCHASES — EVER</div><div class="badge gold">🏆 NEW PASS EVERY 31 DAYS</div><div class="badge">🗺️ NEW MAPS EVERY MONTH</div></div>
 
   <div class="section"><h2>1. Choose your Godzilla — all 6 are FREE</h2><div class="grid" id="charGrid"></div></div>
@@ -191,6 +192,7 @@ let W=0,H=0,DPR=1;
 function resize(){DPR=Math.min(window.devicePixelRatio||1,2);W=window.innerWidth;H=window.innerHeight;canvas.width=W*DPR;canvas.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0)}
 window.addEventListener("resize",resize);resize();
 
+const BUILD_NUMBER=10; // Increment by 1 in ALL THREE files on EVERY push to main, and log it in BUILD.md — the menu shows this number.
 const ROSTER=[
  {id:"thermo",name:"Godzilla 2014 Thermo",emoji:"🔴🦖",color:"#3f3f46",accent:"#ef4444",glow:"#f97316",special:"Red Explosion",desc:"Red Explosion: a huge red blast + 50% more damage for a while."},
  {id:"super",name:"Godzilla 2014 Supercharge",emoji:"🔵🦖",color:"#1e3a5f",accent:"#38bdf8",glow:"#60a5fa",special:"Blue Explosion",desc:"Blue Explosion: a huge blue blast + 50% more damage for a while."},
@@ -241,6 +243,7 @@ if(typeof save.botNum==="number")botNum=Math.max(1,Math.min(6,save.botNum));
 document.querySelectorAll("[data-mode]").forEach(x=>x.classList.toggle("sel",x.dataset.mode===mode));
 document.querySelectorAll("[data-map]").forEach(x=>x.classList.toggle("sel",x.dataset.map===mapName));
 $("botRow").style.display=mode==="bots"?"flex":"none";$("botCount").textContent=botNum+" bots";
+$("buildLine").textContent="Build "+BUILD_NUMBER;
 renderChars();
 
 document.querySelectorAll("[data-mode]").forEach(b=>b.onclick=()=>{mode=b.dataset.mode;save.mode=mode;persist();document.querySelectorAll("[data-mode]").forEach(x=>x.classList.toggle("sel",x===b));$("botRow").style.display=mode==="bots"?"flex":"none";if(mode==="practice")setMap("practice");if(mode==="bots")setMap(mapName==="practice"?"tokyo":mapName)});
