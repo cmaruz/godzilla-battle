@@ -101,7 +101,7 @@ h1 span{color:#ffd83d}
   <div class="badge gold" style="font-size:16px;margin-top:8px">✨ SPECTACULAR EDITION ✨</div>
   <div class="sub">35 fighters enter. 1 Godzilla remains.</div>
   <div class="by">Designed by Mattia 🎮</div>
-  <div class="by" id="buildLine" style="color:#94a3b8">Build 11</div>
+  <div class="by" id="buildLine" style="color:#94a3b8">Build 12</div>
   <div class="badges"><div class="badge green">🚫 NO ADS — EVER</div><div class="badge green">💸 NO PURCHASES — EVER</div><div class="badge gold">🏆 NEW PASS EVERY 31 DAYS</div><div class="badge">🗺️ NEW MAPS EVERY MONTH</div></div>
 
   <div class="section"><h2>1. Choose your Godzilla — all 6 are FREE</h2><div class="grid" id="charGrid"></div></div>
@@ -155,7 +155,7 @@ h1 span{color:#ffd83d}
     🏆 <b>Win:</b> be the last Godzilla standing, or beat the BLUE team in Team Fight.<br>
     📈 <b>Level up:</b> every elimination gives XP. Every 10 total eliminations unlocks a new kind of Godzilla in the Godzillagram.<br>
     💛 <b>Friendly battles:</b> an eliminated Godzilla is just OUT for that battle — nobody gets hurt, and everyone can play again straight away!<br>
-    ⚖️ <b>Opponents:</b> a balanced mix of every Godzilla you have unlocked — the more you unlock, the wider and tougher the mix.<br>
+    ⚖️ <b>Opponents:</b> a balanced mix of the Godzillas you have unlocked, up to Scarlet Godzilla Earth — the more advanced ones never appear as enemies, they are yours alone.<br>
     💥 <b>Spectacular stuff:</b> buildings can be SMASHED, eliminations get a slow-motion replay, combos build up, lightning strikes Tokyo — and in Battle Royale, when only 10 fighters are left, the giant APEX BOSS appears!<br>
     🚫 <b>Mattia's rules:</b> no ads, no purchases, ever. Everything is earned by playing.<br>
     💾 <b>Autosave:</b> your progress saves automatically, so you can close the game and pick up where you left off.<br>
@@ -192,7 +192,7 @@ let W=0,H=0,DPR=1;
 function resize(){DPR=Math.min(window.devicePixelRatio||1,2);W=window.innerWidth;H=window.innerHeight;canvas.width=W*DPR;canvas.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0)}
 window.addEventListener("resize",resize);resize();
 
-const BUILD_NUMBER=11; // Increment by 1 in ALL THREE files on EVERY push to main, and log it in BUILD.md — the menu shows this number.
+const BUILD_NUMBER=12; // Increment by 1 in ALL THREE files on EVERY push to main, and log it in BUILD.md — the menu shows this number.
 const ROSTER=[
  {id:"thermo",name:"Godzilla 2014 Thermo",emoji:"🔴🦖",color:"#3f3f46",accent:"#ef4444",glow:"#f97316",special:"Red Explosion",desc:"Red Explosion: a huge red blast + 50% more damage for a while."},
  {id:"super",name:"Godzilla 2014 Supercharge",emoji:"🔵🦖",color:"#1e3a5f",accent:"#38bdf8",glow:"#60a5fa",special:"Blue Explosion",desc:"Blue Explosion: a huge blue blast + 50% more damage for a while."},
@@ -299,7 +299,8 @@ function setDir(e,dx,dy){const m=Math.hypot(dx,dy);if(m>0.01){e.dirX=dx/m;e.dirY
 function autoAim(e,range){let best=null,bd=range||640;for(const t of ents){if(t.out||t===e)continue;if(e.team!=="solo"&&t.team===e.team)continue;const d=dist(e,t);if(d<bd){bd=d;best=t}}if(best)setDir(e,best.x-e.x,best.y-e.y);return best}
 function beamHit(e,t,range,width){const dx=t.x-e.x,dy=t.y-e.y;const along=dx*e.dirX+dy*e.dirY;const perp=Math.abs(dx*(-e.dirY)+dy*e.dirX);return along>0&&along<range&&perp<width}
 let oppDeck=[];
-function opponentPool(){const p=ROSTER.filter(r=>unlocked(r));return p.length?p:ROSTER.filter(r=>!r.unlockAt)}
+const ENEMY_MAX_UNLOCK_AT=90; // Enemies only go up to Scarlet Godzilla Earth (unlocks at 90) — more advanced Godzillas never appear as opponents.
+function opponentPool(){const p=ROSTER.filter(r=>unlocked(r)&&(!r.unlockAt||r.unlockAt<=ENEMY_MAX_UNLOCK_AT));return p.length?p:ROSTER.filter(r=>!r.unlockAt)}
 function nextOpponentDef(){if(!oppDeck.length){oppDeck=[...opponentPool()];for(let i=oppDeck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const tmp=oppDeck[i];oppDeck[i]=oppDeck[j];oppDeck[j]=tmp}}return oppDeck.pop()}
 function makeEnt(x,y,def,isPlayer,team){
  return {x,y,vx:0,vy:0,r:26,hp:(def.hp||1000),maxhp:(def.hp||1000),def,isPlayer:!!isPlayer,team:team||"solo",face:1,dirX:1,dirY:0,atkCd:0,sp: isPlayer?35:0,specialCd:0,buffUntil:0,buffMult:1,level:1,xp:0,elims:0,aiT:rand(0,.4),wander:rand(0,Math.PI*2),out:false,name:isPlayer?def.name:def.name.replace("Godzilla ","G. "),stun:0,trappedUntil:0,trapSrc:null,trapDmgT:0,trapDmg:0,combo:0,comboT:0,bossT:rand(2,4)}
