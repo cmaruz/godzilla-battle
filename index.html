@@ -101,7 +101,7 @@ h1 span{color:#ffd83d}
   <div class="badge gold" style="font-size:16px;margin-top:8px">✨ SPECTACULAR EDITION ✨</div>
   <div class="sub">35 fighters enter. 1 Godzilla remains.</div>
   <div class="by">Designed by Mattia 🎮</div>
-  <div class="by" id="buildLine" style="color:#94a3b8">Build 10</div>
+  <div class="by" id="buildLine" style="color:#94a3b8">Build 11</div>
   <div class="badges"><div class="badge green">🚫 NO ADS — EVER</div><div class="badge green">💸 NO PURCHASES — EVER</div><div class="badge gold">🏆 NEW PASS EVERY 31 DAYS</div><div class="badge">🗺️ NEW MAPS EVERY MONTH</div></div>
 
   <div class="section"><h2>1. Choose your Godzilla — all 6 are FREE</h2><div class="grid" id="charGrid"></div></div>
@@ -129,7 +129,7 @@ h1 span{color:#ffd83d}
     <button class="btn big" id="playBtn">▶ PLAY</button><br><br>
     <button class="btn gold" id="gramBtn">📸 GODZILLAGRAM — My Collection</button>
     <button class="btn grey" id="howBtn">❓ How to Play</button>
-    <p class="note">Move with the joystick (left) or WASD / arrow keys. Tap <b>ATOMIC ATTACK</b> to shoot. Fill the purple bar, then tap <b>SPECIAL</b> for your Godzilla's own special move!<br>Eliminations level you up. Every 10 total eliminations unlocks a NEW kind of Godzilla, with a special one waiting at 500. Your progress saves automatically. VSTAR at level 35 = +50% damage. VMAX at level 50 with 4 Godzillas = +100% damage.</p>
+    <p class="note">Move with the joystick (left) or WASD / arrow keys. Tap <b>ATOMIC ATTACK</b> to shoot. Fill the purple bar, then tap <b>SPECIAL</b> for your Godzilla's own special move!<br>Eliminations level you up. Every 10 total eliminations unlocks a NEW kind of Godzilla, with special ones waiting at 500 and 1,000. Your progress saves automatically. VSTAR at level 35 = +50% damage. VMAX at level 50 with 4 Godzillas = +100% damage.</p>
     <p class="note" id="metaLine"></p>
   </div>
 </div>
@@ -192,7 +192,7 @@ let W=0,H=0,DPR=1;
 function resize(){DPR=Math.min(window.devicePixelRatio||1,2);W=window.innerWidth;H=window.innerHeight;canvas.width=W*DPR;canvas.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0)}
 window.addEventListener("resize",resize);resize();
 
-const BUILD_NUMBER=10; // Increment by 1 in ALL THREE files on EVERY push to main, and log it in BUILD.md — the menu shows this number.
+const BUILD_NUMBER=11; // Increment by 1 in ALL THREE files on EVERY push to main, and log it in BUILD.md — the menu shows this number.
 const ROSTER=[
  {id:"thermo",name:"Godzilla 2014 Thermo",emoji:"🔴🦖",color:"#3f3f46",accent:"#ef4444",glow:"#f97316",special:"Red Explosion",desc:"Red Explosion: a huge red blast + 50% more damage for a while."},
  {id:"super",name:"Godzilla 2014 Supercharge",emoji:"🔵🦖",color:"#1e3a5f",accent:"#38bdf8",glow:"#60a5fa",special:"Blue Explosion",desc:"Blue Explosion: a huge blue blast + 50% more damage for a while."},
@@ -211,7 +211,8 @@ const ROSTER=[
  {id:"scarlet",name:"Scarlet Godzilla Earth",emoji:"🌋🦖",color:"#450a0a",accent:"#f97316",glow:"#ef4444",special:"Lava Boulder",desc:"Lava Boulder special: 1,800 damage! Unlockable #9.",unlockAt:90,hp:5000},
  {id:"reworked",name:"Reworked Evolved Godzilla",emoji:"🔥✨",color:"#431407",accent:"#fbbf24",glow:"#f97316",special:"Attack Boost +200%",desc:"Attack Boost: +200% attack for 8 seconds while the special is active, then back to normal. Unlockable #10.",unlockAt:100,hp:5500},
  {id:"spacegod",name:"Space Godzilla",emoji:"🟣🪐",color:"#2e1065",accent:"#a855f7",glow:"#c084fc",special:"Poisonous Crystals",desc:"Poisonous Crystals: traps opponents for 10 seconds, dealing 2,000 damage per second. They cannot escape! Unlockable #11.",unlockAt:110,hp:6000},
- {id:"hell",name:"Godzilla Hell",emoji:"🦇🦖",color:"#111827",accent:"#a855f7",glow:"#7c3aed",special:"Bat Swarm",desc:"Bat Swarm: summons 35 bats, each dealing 2,000 damage. When an opponent is out, the bats move to the next closest opponent! Unlockable #12.",unlockAt:500,hp:6500}
+ {id:"hell",name:"Godzilla Hell",emoji:"🦇🦖",color:"#111827",accent:"#a855f7",glow:"#7c3aed",special:"Bat Swarm",desc:"Bat Swarm: summons 35 bats, each dealing 2,000 damage. When an opponent is out, the bats move to the next closest opponent! Unlockable #12.",unlockAt:500,hp:6500},
+ {id:"kamata",name:"Kamata Kun",emoji:"🌊🦖",color:"#7f1d1d",accent:"#ef4444",glow:"#f87171",special:"Red River",desc:"Red River: a red river covers the whole map, dealing 1,000 damage to every opponent! Unlockable #13.",unlockAt:1000,hp:7000}
 ];
 let save={totalElims:0,wins:0,battles:0};
 try{const s=localStorage.getItem("godzillaBattleSaveV1");if(s)save=JSON.parse(s);if(typeof save.totalElims!=="number"){save.totalElims=0;for(const k in save){if(k.indexOf("total")===0&&k!=="totalElims"&&typeof save[k]==="number"){save.totalElims=save[k];delete save[k]}}}}catch(e){}
@@ -366,6 +367,7 @@ function attack(e){
  const speed=520;const hx=e.x+e.dirX*24,hy=e.y+e.dirY*24;projs.push({x:hx,y:hy,vx:e.dirX*speed,vy:e.dirY*speed,src:e,color:e.def.accent,dmg:e.isBoss?42:(e.isPlayer?34:20),r:e.isBoss?16:9,life:650});if(e.isPlayer)sfx("shoot");
  parts.push({x:hx,y:hy,vx:e.dirX*80,vy:e.dirY*80,life:180,color:e.def.glow,size:7});
 }
+let riverT=0; // Red River visual timer (ms) — Kamata Kun's special
 function useSpecial(e){
  if(e.out)return;
  if(e.isPlayer&&(e.sp<100))return;
@@ -404,7 +406,7 @@ function useSpecial(e){
    enemies().forEach(t2=>{t2.trappedUntil=now+(e.isPlayer?10000:3000);t2.trapSrc=e;t2.trapDmgT=0;t2.trapDmg=e.isPlayer?2000:250;explode(t2.x,t2.y,"#a855f7",25)});explode(e.x,e.y,"#a855f7",40);if(e===player)toast("💜 POISONOUS CRYSTALS! Opponents trapped for 10 seconds!");
  } else if(id==="hell"){
    for(let i=0;i<35;i++){const a=rand(0,Math.PI*2);projs.push({x:e.x+Math.cos(a)*30,y:e.y+Math.sin(a)*30,vx:Math.cos(a)*380,vy:Math.sin(a)*380,src:e,color:"#a855f7",dmg:(e.isPlayer?2000:150),r:10,life:8000,bat:true,batCd:0})}explode(e.x,e.y,"#a855f7",50);if(e===player)toast("🦇 BAT SWARM! 35 bats!");
- }
+ } else if(id==="kamata"){const dmg=e.isPlayer?1000:250;riverT=500;enemies().forEach(t2=>{explode(t2.x,t2.y,"#dc2626",22);damage(e,t2,dmg)});explode(e.x,e.y,"#dc2626",40);shake=Math.max(shake,10);if(e===player)toast("🌊 RED RIVER! 1,000 damage to every opponent!");}
  updateHud();
 }
 
@@ -491,6 +493,7 @@ function step(dt){
  // zone
  if(mode==="royale"&&running){zoneT+=dt;if(zoneT>7){zoneT=0;zone.r=Math.max(180,zone.r-115)}if(player&&!player.out&&Math.hypot(player.x-zone.x,player.y-zone.y)>zone.r){if(Math.random()<dt*4)damage(null,player,14,"⚠️ STORM ZONE!")}}
  // clouds (Shin smoke / Ultima red smoke)
+ if(riverT>0)riverT-=dt*1000;
  for(const c of clouds){c.life-=dt*1000;c.dmgT-=dt*1000;if(c.dmgT<=0){c.dmgT=380;for(const t of ents){if(!t.out&&t!==c.src&&(c.src.team==="solo"||t.team!==c.src.team)&&Math.hypot(t.x-c.x,t.y-c.y)<95)damage(c.src,t,c.kind==="ultima"?64:22)}}}
  clouds=clouds.filter(c=>c.life>0);
  // projectiles
@@ -549,6 +552,7 @@ function draw(){
  for(let gx=0;gx<WORLD.w;gx+=80){ctx.beginPath();ctx.moveTo(gx-cam.x,0-cam.y);ctx.lineTo(gx-cam.x,WORLD.h-cam.y);ctx.stroke()}
  for(let gy=0;gy<WORLD.h;gy+=80){ctx.beginPath();ctx.moveTo(0-cam.x,gy-cam.y);ctx.lineTo(WORLD.w-cam.x,gy-cam.y);ctx.stroke()}
  ctx.strokeStyle="#facc15";ctx.lineWidth=3;ctx.strokeRect(0-cam.x,0-cam.y,WORLD.w,WORLD.h);
+ if(riverT>0){const a=Math.min(.45,riverT/500*.45);ctx.fillStyle="rgba(220,38,38,"+a.toFixed(3)+")";ctx.fillRect(0-cam.x,0-cam.y,WORLD.w,WORLD.h);ctx.strokeStyle="rgba(254,202,202,.85)";ctx.lineWidth=10;for(let wy=0;wy<3;wy++){ctx.beginPath();for(let wx=0;wx<=WORLD.w;wx+=60){const yy=WORLD.h*(.25+wy*.25)+Math.sin(wx/90+Date.now()/90+wy*2)*26;wx===0?ctx.moveTo(wx-cam.x,yy-cam.y):ctx.lineTo(wx-cam.x,yy-cam.y)}ctx.stroke()}}
  if(mapName==="volcano"){ctx.beginPath();ctx.arc(WORLD.w/2-cam.x,WORLD.h/2-cam.y,110,0,Math.PI*2);ctx.fillStyle="#f97316";ctx.fill();ctx.beginPath();ctx.arc(WORLD.w/2-cam.x,WORLD.h/2-cam.y,66,0,Math.PI*2);ctx.fillStyle="#dc2626";ctx.fill()}
  if(mapName==="ice"){ctx.beginPath();ctx.ellipse(WORLD.w/2-cam.x,WORLD.h/2-cam.y,320,200,0,0,Math.PI*2);ctx.fillStyle="rgba(186,230,253,.45)";ctx.fill();ctx.beginPath();ctx.ellipse(WORLD.w/2-cam.x,WORLD.h/2-cam.y,210,120,0,0,Math.PI*2);ctx.fillStyle="rgba(224,242,254,.5)";ctx.fill();ctx.strokeStyle="rgba(255,255,255,.5)";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(WORLD.w/2-140-cam.x,WORLD.h/2-40-cam.y);ctx.lineTo(WORLD.w/2-30-cam.x,WORLD.h/2+10-cam.y);ctx.lineTo(WORLD.w/2+90-cam.x,WORLD.h/2-25-cam.y);ctx.stroke()}
  if(mapName==="desert"){ctx.fillStyle="rgba(0,0,0,.13)";[[.2,.3],[.68,.58],[.42,.86],[.85,.12]].forEach(d=>{ctx.beginPath();ctx.ellipse(WORLD.w*d[0]-cam.x,WORLD.h*d[1]-cam.y,190,52,0,0,Math.PI*2);ctx.fill()});ctx.beginPath();ctx.ellipse(WORLD.w*.82-cam.x,WORLD.h*.24-cam.y,85,42,0,0,Math.PI*2);ctx.fillStyle="rgba(56,189,248,.55)";ctx.fill()}
