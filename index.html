@@ -68,7 +68,10 @@ h1 span{color:#ffd83d}
 @keyframes cfall{to{transform:translateY(115vh) rotate(360deg)}}
 #resetBtnHud{pointer-events:auto;background:#7f1d1d;border:2px solid rgba(255,255,255,.55);color:#fff;border-radius:10px;padding:5px 9px;font-size:12px;font-weight:900;cursor:pointer;margin-top:5px}
 #resetConfirm{position:absolute;inset:0;z-index:20;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,.88);padding:20px}
+#pauseBtn{pointer-events:auto;background:#334155;border:2px solid rgba(255,255,255,.55);color:#fff;border-radius:10px;padding:5px 9px;font-size:12px;font-weight:900;cursor:pointer;margin-top:5px}
+#pauseMenu{position:absolute;inset:0;z-index:20;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,.88);padding:20px}
 #resetCard{background:#111c38;border:2px solid #f87171;border-radius:20px;padding:22px;max-width:520px;text-align:center}
+#pauseCard{background:#111c38;border:2px solid #4ade80;border-radius:20px;padding:22px;max-width:520px;text-align:center}
 #toast{position:absolute;top:76px;left:50%;transform:translateX(-50%);z-index:8;background:rgba(2,6,23,.88);border:1.5px solid #facc15;border-radius:13px;padding:9px 13px;font-weight:900;display:none;max-width:92vw;text-align:center}
 </style>
 </head>
@@ -80,7 +83,7 @@ h1 span{color:#ffd83d}
 <div id="hud" class="hidden">
   <div class="hudBox"><div id="hudName">Godzilla</div><div id="hpWrap"><div id="hpBar"></div></div><div id="spWrap"><div id="spBar"></div></div><div style="font-size:11px;opacity:.85">SPECIAL</div></div>
   <div class="hudBox" style="text-align:center"><div id="hudAlive">35 ALIVE</div><div id="hudElims">Eliminations: 0</div><div id="hudLevel">Level 1</div></div>
-  <div class="hudBox" style="text-align:right"><div id="hudMode">BATTLE ROYALE</div><div id="hudTotal">Total eliminations: 0</div><div class="teamScore" id="hudTeam"></div><button id="resetBtnHud">↻ START AGAIN</button></div>
+  <div class="hudBox" style="text-align:right"><div id="hudMode">BATTLE ROYALE</div><div id="hudTotal">Total eliminations: 0</div><div class="teamScore" id="hudTeam"></div><button id="resetBtnHud">↻ START AGAIN</button><button id="pauseBtn">⏸ PAUSE</button></div>
 </div>
 <div id="toast"></div>
 <div id="centerMsg" class="hidden"></div>
@@ -101,7 +104,7 @@ h1 span{color:#ffd83d}
   <div class="badge gold" style="font-size:16px;margin-top:8px">✨ SPECTACULAR EDITION ✨</div>
   <div class="sub">35 fighters enter. 1 Godzilla remains.</div>
   <div class="by">Designed by Mattia 🎮</div>
-  <div class="by" id="buildLine" style="color:#94a3b8">Build 14</div>
+  <div class="by" id="buildLine" style="color:#94a3b8">Build 15</div>
   <div class="badges"><div class="badge green">🚫 NO ADS — EVER</div><div class="badge green">💸 NO PURCHASES — EVER</div><div class="badge gold">🏆 NEW PASS EVERY 31 DAYS</div><div class="badge">🗺️ NEW MAPS EVERY MONTH</div></div>
 
   <div class="section"><h2>1. Choose your Godzilla — all 6 are FREE</h2><div class="grid" id="charGrid"></div></div>
@@ -159,7 +162,8 @@ h1 span{color:#ffd83d}
     💥 <b>Spectacular stuff:</b> buildings can be SMASHED, eliminations get a slow-motion replay, combos build up, lightning strikes Tokyo — and in Battle Royale, when only 10 fighters are left, the giant APEX BOSS appears!<br>
     🚫 <b>Mattia's rules:</b> no ads, no purchases, ever. Everything is earned by playing.<br>
     💾 <b>Autosave:</b> your progress saves automatically, so you can close the game and pick up where you left off.<br>
-    ↻ <b>Start again:</b> the START AGAIN button at the top erases all your progress — but it always asks you first, so you cannot erase anything by accident.
+    ↻ <b>Start again:</b> the START AGAIN button at the top erases all your progress — but it always asks you first, so you cannot erase anything by accident.<br>
+    ⏸ <b>Pause:</b> tap ⏸ PAUSE at the top (or press P) to pause the battle. From there you can keep playing, or go back to the main menu — anything you have already eliminated stays counted.
   </div>
   <br><button class="btn grey" id="howBack">← Back to Menu</button>
 </div>
@@ -182,6 +186,7 @@ h1 span{color:#ffd83d}
   <button class="btn grey" id="winMenuBtn">🏠 GO BACK TO MENU</button>
 </div>
 <div id="resetConfirm"><div id="resetCard"><div style="font-size:52px">↻</div><h2 style="margin:8px 0">START AGAIN?</h2><p style="line-height:1.5;opacity:.92">This erases <b>all</b> your progress:<br>total eliminations, wins, battles<br>and every unlocked Godzilla.<br>Your Godzilla goes back to the first one.<br><br>Are you sure?</p><br><button class="btn" style="background:#dc2626;box-shadow:0 5px 0 #7f1d1d" id="resetYes">YES, ERASE EVERYTHING</button><br><br><button class="btn grey" id="resetNo">NO, KEEP PLAYING</button></div></div>
+<div id="pauseMenu"><div id="pauseCard"><div style="font-size:52px">⏸️</div><h2 style="margin:8px 0">PAUSED</h2><p style="line-height:1.5;opacity:.92">Take a break — your battle is waiting for you.<br>Everything you have already eliminated stays counted.</p><br><button class="btn" style="background:#16a34a;box-shadow:0 5px 0 #14532d" id="resumeBtn">▶ KEEP PLAYING</button><br><br><button class="btn grey" id="quitBtn">🏠 BACK TO MAIN MENU</button></div></div>
 </div>
 
 <script>
@@ -192,7 +197,7 @@ let W=0,H=0,DPR=1;
 function resize(){DPR=Math.min(window.devicePixelRatio||1,2);W=window.innerWidth;H=window.innerHeight;canvas.width=W*DPR;canvas.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0)}
 window.addEventListener("resize",resize);resize();
 
-const BUILD_NUMBER=14; // Increment by 1 in ALL THREE files on EVERY push to main, and log it in BUILD.md — the menu shows this number.
+const BUILD_NUMBER=15; // Increment by 1 in ALL THREE files on EVERY push to main, and log it in BUILD.md — the menu shows this number.
 const ROSTER=[
  {id:"thermo",name:"Godzilla 2014 Thermo",emoji:"🔴🦖",color:"#3f3f46",accent:"#ef4444",glow:"#f97316",special:"Red Explosion",desc:"Red Explosion: a huge red blast + 50% more damage for a while."},
  {id:"super",name:"Godzilla 2014 Supercharge",emoji:"🔵🦖",color:"#1e3a5f",accent:"#38bdf8",glow:"#60a5fa",special:"Blue Explosion",desc:"Blue Explosion: a huge blue blast + 50% more damage for a while."},
@@ -262,6 +267,11 @@ function openResetConfirm(){resetWasRunning=running;running=false;$("resetConfir
 function closeResetConfirm(){$("resetConfirm").style.display="none";if(resetWasRunning){running=true;last=performance.now()}resetWasRunning=false}
 function doReset(){try{localStorage.removeItem("godzillaBattleSaveV1")}catch(e){}save={totalElims:0,wins:0,battles:0};selected="thermo";$("resetConfirm").style.display="none";resetWasRunning=false;running=false;renderChars();show("menu")}
 $("resetBtnMenu").onclick=openResetConfirm;$("resetBtnHud").onclick=openResetConfirm;$("resetYes").onclick=doReset;$("resetNo").onclick=closeResetConfirm;
+let paused=false;
+function pauseGame(){if(!running||paused)return;paused=true;$("pauseMenu").style.display="flex"}
+function resumeGame(){if(!paused)return;paused=false;$("pauseMenu").style.display="none";last=performance.now()}
+function quitToMenu(){paused=false;$("pauseMenu").style.display="none";running=false;winT=0;persist();renderChars();show("menu")}
+$("pauseBtn").onclick=pauseGame;$("resumeBtn").onclick=resumeGame;$("quitBtn").onclick=quitToMenu;
 function toast(t,ms=2600){const el=$("toast");el.textContent=t;el.style.display="block";clearTimeout(toast._t);toast._t=setTimeout(()=>el.style.display="none",ms)}
 function center(t,ms=1300){const el=$("centerMsg");el.textContent=t;el.classList.remove("hidden");clearTimeout(center._t);center._t=setTimeout(()=>el.classList.add("hidden"),ms)}
 function confetti(){const w=$("win");w.querySelectorAll(".confetti").forEach(e=>e.remove());const em=["🎉","⭐","🔥","🦖","🏆","💥","✨"];for(let i=0;i<70;i++){const sp=document.createElement("span");sp.className="confetti";sp.textContent=em[i%em.length];sp.style.left=(Math.random()*98)+"%";sp.style.fontSize=(18+Math.random()*26)+"px";sp.style.animationDuration=(1.6+Math.random()*2.2)+"s";sp.style.animationDelay=(Math.random()*.8)+"s";w.appendChild(sp)}}
@@ -370,6 +380,7 @@ function attack(e){
 }
 let riverT=0; // Red River visual timer (ms) — Kamata Kun's special
 function useSpecial(e){
+ if(paused)return;
  if(e.out)return;
  if(e.isPlayer&&(e.sp<100))return;
  if(!e.isPlayer&&e.specialCd>0)return;
@@ -424,7 +435,7 @@ $("atkBtn").addEventListener("mousedown",()=>atkHeld=true);window.addEventListen
 $("spBtn").addEventListener("touchstart",e=>{e.preventDefault();if(player)useSpecial(player)},{passive:false});
 $("spBtn").addEventListener("mousedown",()=>{if(player)useSpecial(player)});
 $("muteBtn").addEventListener("click",()=>{soundOn=!soundOn;$("muteBtn").textContent=soundOn?"🔊":"🔇";if(soundOn)sfx("level")});
-window.addEventListener("keydown",e=>{keys[e.key.toLowerCase()]=true;if((e.key===" "||e.key.toLowerCase()==="j"))atkHeld=true;if(e.key.toLowerCase()==="k"&&player)useSpecial(player);if([" ","arrowup","arrowdown"].includes(e.key.toLowerCase())||e.key===" ")e.preventDefault()});
+window.addEventListener("keydown",e=>{keys[e.key.toLowerCase()]=true;if((e.key===" "||e.key.toLowerCase()==="j"))atkHeld=true;if(e.key.toLowerCase()==="k"&&player)useSpecial(player);if(e.key.toLowerCase()==="p"||e.key==="Escape"){if(paused)resumeGame();else pauseGame()}if([" ","arrowup","arrowdown"].includes(e.key.toLowerCase())||e.key===" ")e.preventDefault()});
 window.addEventListener("keyup",e=>{keys[e.key.toLowerCase()]=false;if(e.key===" "||e.key.toLowerCase()==="j")atkHeld=false});
 
 function updateHud(){
@@ -585,7 +596,7 @@ function draw(){
  cam.x=_cx;cam.y=_cy;
 }
 function loop(now){requestAnimationFrame(loop);const rdt=Math.min(.05,(now-last)/1000||0);last=now;if(slowT>0)slowT-=rdt;shake=Math.max(0,shake-rdt*48);
- if(running){if(freezeT>0){freezeT-=rdt;draw()}else{step(rdt*(slowT>0?.35:1));draw()}}}
+ if(running){if(paused){draw()}else if(freezeT>0){freezeT-=rdt;draw()}else{step(rdt*(slowT>0?.35:1));draw()}}}
 requestAnimationFrame(loop);
 show("menu");
 </script>
