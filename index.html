@@ -101,7 +101,7 @@ h1 span{color:#ffd83d}
   <div class="badge gold" style="font-size:16px;margin-top:8px">✨ SPECTACULAR EDITION ✨</div>
   <div class="sub">35 fighters enter. 1 Godzilla remains.</div>
   <div class="by">Designed by Mattia 🎮</div>
-  <div class="by" id="buildLine" style="color:#94a3b8">Build 13</div>
+  <div class="by" id="buildLine" style="color:#94a3b8">Build 14</div>
   <div class="badges"><div class="badge green">🚫 NO ADS — EVER</div><div class="badge green">💸 NO PURCHASES — EVER</div><div class="badge gold">🏆 NEW PASS EVERY 31 DAYS</div><div class="badge">🗺️ NEW MAPS EVERY MONTH</div></div>
 
   <div class="section"><h2>1. Choose your Godzilla — all 6 are FREE</h2><div class="grid" id="charGrid"></div></div>
@@ -192,7 +192,7 @@ let W=0,H=0,DPR=1;
 function resize(){DPR=Math.min(window.devicePixelRatio||1,2);W=window.innerWidth;H=window.innerHeight;canvas.width=W*DPR;canvas.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0)}
 window.addEventListener("resize",resize);resize();
 
-const BUILD_NUMBER=13; // Increment by 1 in ALL THREE files on EVERY push to main, and log it in BUILD.md — the menu shows this number.
+const BUILD_NUMBER=14; // Increment by 1 in ALL THREE files on EVERY push to main, and log it in BUILD.md — the menu shows this number.
 const ROSTER=[
  {id:"thermo",name:"Godzilla 2014 Thermo",emoji:"🔴🦖",color:"#3f3f46",accent:"#ef4444",glow:"#f97316",special:"Red Explosion",desc:"Red Explosion: a huge red blast + 50% more damage for a while."},
  {id:"super",name:"Godzilla 2014 Supercharge",emoji:"🔵🦖",color:"#1e3a5f",accent:"#38bdf8",glow:"#60a5fa",special:"Blue Explosion",desc:"Blue Explosion: a huge blue blast + 50% more damage for a while."},
@@ -320,7 +320,7 @@ function spawnPos(){for(let i=0;i<60;i++){const x=rand(90,WORLD.w-90),y=rand(90,
 function startGame(){
  save.battles++;persist();
  const sz=MAP_SIZES[mapName]||MAP_SIZES.tokyo;WORLD={w:sz.w,h:sz.h};
- const pdef=charById(selected);obs=obstacles();ents=[];projs=[];parts=[];texts=[];beams=[];clouds=[];zone={x:WORLD.w/2,y:WORLD.h/2,r:Math.max(WORLD.w,WORLD.h)*0.62};zoneT=0;teamScore={red:0,blue:0};shake=0;slowT=0;bossSpawned=false;bossRef=null;$("vig").style.opacity=0;
+ const pdef=charById(selected);obs=obstacles();ents=[];projs=[];parts=[];texts=[];beams=[];clouds=[];zone={x:WORLD.w/2,y:WORLD.h/2,r:Math.max(WORLD.w,WORLD.h)*0.62};zoneT=0;teamScore={red:0,blue:0};shake=0;slowT=0;bossSpawned=false;bossRef=null;winT=0;$("vig").style.opacity=0;
  const ps=spawnPos();player=makeEnt(ps.x,ps.y,pdef,true,mode==="team"||mode==="party"?"red":"solo");ents.push(player);
  oppDeck=[];
  function addEnemy(team){const s=spawnPos();const d=nextOpponentDef();const e=makeEnt(s.x,s.y,d,false,team||"solo");e.sp=rand(20,70);ents.push(e);return e}
@@ -443,12 +443,14 @@ function updateHud(){
  $("hudTeam").textContent=mode==="boss"&&bossRef?("👹 APEX BOSS HP: "+Math.max(0,Math.ceil(bossRef.hp))+" / "+bossRef.maxhp):((mode==="team"||mode==="party")?("RED "+teamScore.red+" — BLUE "+teamScore.blue):"");
  $("vig").style.opacity=(!player||player.out)?0:(player.hp<280?(.45+.28*Math.sin(Date.now()/160)).toFixed(2):(performance.now()-lastPlayerHit<260?.55:0));
 }
+let winT=0; // Seconds left of the victory linger — the game stays on screen a little after winning, before the victory screen.
 function checkWin(){
  if(!running||!player||player.out)return;
  if(mode==="practice")return;
+ if(winT>0)return; // linger already running — do not restart it
  const enemiesAlive=ents.filter(e=>!e.out&&e!==player&&(player.team==="solo"||e.team!==player.team));
  const hostiles=enemiesAlive.filter(e=>!(mode==="team"||mode==="party")||e.team==="blue");
- if(hostiles.length===0)gameOver(true);
+ if(hostiles.length===0){winT=2;center("🏆 YOU WIN!",1900)}
 }
 function gameOver(won){
  if(!running)return;running=false;persist();
@@ -492,7 +494,7 @@ function step(dt){
  // boss uses the other Godzillas' specials!
  for(const e of ents){if(e.isBoss&&!e.out){e.bossT-=dt;if(e.bossT<=0){e.bossT=rand(3.6,5.4);const bak=e.def;const pool=ROSTER.filter(r=>!r.unlockAt);e.def=pool[Math.floor(Math.random()*pool.length)];e.specialCd=0;e.sp=100;useSpecial(e);e.def=bak;e.sp=55}}}
  // zone
- if(mode==="royale"&&running){zoneT+=dt;if(zoneT>7){zoneT=0;zone.r=Math.max(180,zone.r-115)}if(player&&!player.out&&Math.hypot(player.x-zone.x,player.y-zone.y)>zone.r){if(Math.random()<dt*4)damage(null,player,14,"⚠️ STORM ZONE!")}}
+ if(mode==="royale"&&running&&winT<=0){zoneT+=dt;if(zoneT>7){zoneT=0;zone.r=Math.max(180,zone.r-115)}if(player&&!player.out&&Math.hypot(player.x-zone.x,player.y-zone.y)>zone.r){if(Math.random()<dt*4)damage(null,player,14,"⚠️ STORM ZONE!")}}
  // clouds (Shin smoke / Ultima red smoke)
  if(riverT>0)riverT-=dt*1000;
  for(const c of clouds){c.life-=dt*1000;c.dmgT-=dt*1000;if(c.dmgT<=0){c.dmgT=380;for(const t of ents){if(!t.out&&t!==c.src&&(c.src.team==="solo"||t.team!==c.src.team)&&Math.hypot(t.x-c.x,t.y-c.y)<95)damage(c.src,t,c.kind==="ultima"?64:22)}}}
@@ -512,6 +514,7 @@ function step(dt){
  // practice respawn
  if(mode==="practice"){for(const e of ents)if(e.out){e.out=false;e.hp=e.maxhp;const s=spawnPos();e.x=s.x;e.y=s.y}}
  if(player){cam.x=Math.max(0,Math.min(WORLD.w-W,player.x-W/2));cam.y=Math.max(0,Math.min(WORLD.h-H,player.y-H/2));if(WORLD.w<W)cam.x=(WORLD.w-W)/2;if(WORLD.h<H)cam.y=(WORLD.h-H)/2}
+ if(winT>0){winT-=dt;if(winT<=0){winT=0;gameOver(true);return}}
  updateHud();checkWin();
 }
 function drawKaiju(e){
