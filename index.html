@@ -101,7 +101,7 @@ h1 span{color:#ffd83d}
   <div class="badge gold" style="font-size:16px;margin-top:8px">✨ SPECTACULAR EDITION ✨</div>
   <div class="sub">35 fighters enter. 1 Godzilla remains.</div>
   <div class="by">Designed by Mattia 🎮</div>
-  <div class="by" id="buildLine" style="color:#94a3b8">Build 12</div>
+  <div class="by" id="buildLine" style="color:#94a3b8">Build 13</div>
   <div class="badges"><div class="badge green">🚫 NO ADS — EVER</div><div class="badge green">💸 NO PURCHASES — EVER</div><div class="badge gold">🏆 NEW PASS EVERY 31 DAYS</div><div class="badge">🗺️ NEW MAPS EVERY MONTH</div></div>
 
   <div class="section"><h2>1. Choose your Godzilla — all 6 are FREE</h2><div class="grid" id="charGrid"></div></div>
@@ -192,7 +192,7 @@ let W=0,H=0,DPR=1;
 function resize(){DPR=Math.min(window.devicePixelRatio||1,2);W=window.innerWidth;H=window.innerHeight;canvas.width=W*DPR;canvas.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0)}
 window.addEventListener("resize",resize);resize();
 
-const BUILD_NUMBER=12; // Increment by 1 in ALL THREE files on EVERY push to main, and log it in BUILD.md — the menu shows this number.
+const BUILD_NUMBER=13; // Increment by 1 in ALL THREE files on EVERY push to main, and log it in BUILD.md — the menu shows this number.
 const ROSTER=[
  {id:"thermo",name:"Godzilla 2014 Thermo",emoji:"🔴🦖",color:"#3f3f46",accent:"#ef4444",glow:"#f97316",special:"Red Explosion",desc:"Red Explosion: a huge red blast + 50% more damage for a while."},
  {id:"super",name:"Godzilla 2014 Supercharge",emoji:"🔵🦖",color:"#1e3a5f",accent:"#38bdf8",glow:"#60a5fa",special:"Blue Explosion",desc:"Blue Explosion: a huge blue blast + 50% more damage for a while."},
@@ -338,7 +338,7 @@ function startGame(){
 }
 function spawnApexBoss(announce){
  let pos={x:zone.x,y:zone.y};for(let i=0;i<40;i++){const c=spawnPos();if(!player||Math.hypot(c.x-player.x,c.y-player.y)>380){pos=c;break}}
- const b=makeEnt(pos.x,pos.y,BOSS_DEF,false,"solo");b.isBoss=true;b.big=2.7;b.r=70;b.maxhp=4200;b.hp=4200;b.level=50;b.name="👹 APEX GODZILLA";b.sp=60;ents.push(b);bossRef=b;bossSpawned=true;
+ const b=makeEnt(pos.x,pos.y,BOSS_DEF,false,"solo");b.isBoss=true;b.big=2.7;b.r=70;b.maxhp=9000;b.hp=9000;b.level=50;b.name="👹 APEX GODZILLA";b.sp=60;ents.push(b);bossRef=b;bossSpawned=true;
  if(announce){center("⚠️ THE APEX BOSS IS HERE! 👹",2200);sfx("boss");shake=Math.max(shake,20)}
  return b;
 }
@@ -440,7 +440,7 @@ function updateHud(){
  $("hudLevel").textContent=(player.buffUntil>performance.now()?("⚡ +"+Math.round((player.buffMult-1)*100)+"% DAMAGE! "):"")+(mode==="royale"?"Zone shrinking…":"");
  $("hudMode").textContent={royale:"👑 BATTLE ROYALE",bots:"🤖 BOTS MODE",team:"🔴 RED vs BLUE 🔵",party:"🎉 PARTY MODE",practice:"🎯 PRACTICE",boss:"👹 APEX BOSS FIGHT"}[mode];
  $("hudTotal").textContent="Total eliminations: "+save.totalElims;
- $("hudTeam").textContent=mode==="boss"&&bossRef?("👹 APEX BOSS HP: "+Math.max(0,Math.ceil(bossRef.hp))+" / 4200"):((mode==="team"||mode==="party")?("RED "+teamScore.red+" — BLUE "+teamScore.blue):"");
+ $("hudTeam").textContent=mode==="boss"&&bossRef?("👹 APEX BOSS HP: "+Math.max(0,Math.ceil(bossRef.hp))+" / "+bossRef.maxhp):((mode==="team"||mode==="party")?("RED "+teamScore.red+" — BLUE "+teamScore.blue):"");
  $("vig").style.opacity=(!player||player.out)?0:(player.hp<280?(.45+.28*Math.sin(Date.now()/160)).toFixed(2):(performance.now()-lastPlayerHit<260?.55:0));
 }
 function checkWin(){
